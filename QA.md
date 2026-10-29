@@ -131,3 +131,9 @@ Referencia leída en el tema local Poppr: panel completo, cierre circular y nave
 - Scroll .835–.860 grows bee from 12px to 340px desktop / 140px mobile; .866–.889 exits right beyond viewport. No time-based replay and hidden outside this beat or for reduced motion.
 - Mobile history typography/spacing leaves a clear lane between prose and jars.
 - Edge tested desktop 1440x900 and mobile 390x844: increasing bounds, fully offscreen exit, no page errors; screenshots checked for text overlap.
+
+## v32 — Origin apiary background
+- Added assets/origin-apiary.webp (381616 bytes), a generated illustrative countryside/apiary photograph, not documentation of actual Néctara facilities.
+- Built-in ImageGen prompt: quiet Castilian countryside evocative of Segovia, scattered holm oaks, distant hills, modest rows of wooden beehive boxes, gentle morning daylight, muted natural colors, wide framing, no people/text/logos; white overlay applied separately in CSS.
+- Origin backdrop only: warm white gradient overlay with stronger mobile coverage; map remains opaque above it, existing zoom wash unchanged.
+- Desktop 1440x900 and mobile 390x900 screenshots inspected for legibility and map prominence.
