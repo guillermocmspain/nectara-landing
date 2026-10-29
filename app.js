@@ -297,7 +297,7 @@ async function initJar(){
 }
 
 measure();renderScene(current,0);requestTick();
-const core=['./assets/botanical.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp','./assets/jar-front.webp'];
+const core=['./assets/botanical-complete.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp','./assets/jar-front.webp'];
 let completed=0;const total=core.length+1;
 let loadTarget=0,loadShown=0,loadLast=0,loadDone=false,loadClosed=false;
 function loadProgress(){loadTarget=++completed/total*100}

@@ -36,7 +36,7 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 @media(min-width:761px){#story{height:1200svh}.narrative.origin-copy,.narrative.collection-copy{top:58px;width:650px}.narrative h1,.narrative h2{font-size:34px;max-width:650px}.narrative .eyebrow{margin-bottom:15px}.reading-window{height:auto;margin-top:22px;overflow:visible;mask-image:none}.reading-text{padding:0;will-change:auto;transform:none!important}.reading-text p{font-size:15px;line-height:1.5;margin-bottom:14px}.reading-cue{display:none}}
 @media(max-width:760px){.narrative h1,.narrative h2{font-size:29px}.reading-text p{font-size:15px;line-height:1.5;margin-bottom:16px}}
 
-#preloader{background:var(--mint) url('./assets/botanical.webp') center/cover no-repeat;transition:opacity .55s,visibility .55s}
+#preloader{background:var(--mint);transition:opacity .55s,visibility .55s}
 .preloader-content{position:relative;padding:30px 26px 20px;border-radius:50%;background:radial-gradient(ellipse,#e9f3eaf5 0%,#e9f3eac9 48%,#e9f3ea00 73%)}
 .loader-flight .bee{left:0;transition:none;will-change:transform}#load-fill{transition:none;will-change:transform}#load-track{height:3px;background:#30423040}#load-percent{font-size:18px}
 @media(max-width:760px){.origin-copy .reading-window{height:300px}.origin-copy .reading-cue{margin-top:7px}.preloader-content{width:86vw;padding:30px 20px}}
@@ -92,3 +92,5 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 #cart-count{position:absolute;right:-3px;top:-2px;display:grid;place-items:center;min-width:20px;height:20px;margin:0;padding:0 4px;border-radius:12px;background:var(--green);color:var(--cream);font:11px/1 Arial,sans-serif;border:2px solid var(--mint)}
 @media(max-width:1100px){.header-actions{gap:20px}}
 @media(max-width:760px){.header-actions{gap:12px}#cart-open{width:40px;height:44px}.site-header{padding-inline:18px;gap:12px}}
+
+.preloader-backdrop{position:absolute;inset:var(--header) 0 0;pointer-events:none}.preloader-content{z-index:1}
