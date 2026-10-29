@@ -47,3 +47,7 @@ Incorporados íntegramente los cuatro párrafos de origen y los cinco de histori
 ## Cruce entre productos
 
 El tarro se desplaza de izquierda a derecha en una curva suave mientras el mismo progreso interpola el color y el precinto. Texto de miel cruda a la izquierda. Recorrido inverso verificado; en móvil el desplazamiento se limita al ancho disponible. Revisión a 1440 y 390 px en inicio, mitad y final; sin errores JavaScript y con el tarro dentro de pantalla.
+
+## Disolución del mapa durante el zoom
+
+El mapa claro se desvanece antes de alcanzar los bordes de su viewport. Una capa a todo el ancho funde el fondo de origen con el verde de producto, manteniendo el círculo expansivo. Revisados puntos intermedios y recorrido inverso a 1920 y 390 px, sin franjas laterales, desbordamientos ni errores JavaScript.

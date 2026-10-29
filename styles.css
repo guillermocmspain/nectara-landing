@@ -30,3 +30,5 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 
 .raw-product .product-copy{left:80px;width:480px}
 @media(max-width:760px){.raw-product .product-copy{left:26px;width:340px}}
+
+#map-wash{position:absolute;inset:0;background:var(--green);opacity:0;visibility:hidden;pointer-events:none;z-index:0;will-change:opacity}.world{z-index:1}

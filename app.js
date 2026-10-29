@@ -66,7 +66,7 @@ function renderScene(u,t){
  const s=clamp(storyTime(u));
  readingHolds.forEach((h,i)=>{const q=clamp((u-h.start)/(h.end-h.start));style($(h.selector+' .reading-text'),'transform',`translate3d(0,${-q*readingExtents[i]}px,0)`);opacity($(h.selector+' .reading-cue'),1-ease((q-.9)/.1))});
  const originEnd=clamp((u-.33425)/.016);
- opacity($('.origin-copy'),mobile?1-ease(originEnd):1);
+ opacity($('.origin-copy'),mobile?1-ease(originEnd):1-ease((s-.30)/.045));
 
  const p=sceneProgress(s),g=artGeometry(),take=ease((s-.005)/.035),land=ease((s-.978)/.014),returning=ease((s-.89)/.085);
  const finished=s>=.993;
@@ -169,7 +169,9 @@ function renderScene(u,t){
  $('#map-drawing').setAttribute('transform',`translate(${cx} ${cy}) scale(${mw/628*mz}) translate(-251 -203)`);
  map.style.setProperty('--map-detail',(1-ease(z/.25)).toFixed(4));
  const mapAlpha=(s<.40?ease((p-.65)/.3):1-ease((s-.40)/.015))*(mobile?ease(originEnd):1);
- opacity(map,mapAlpha);
+ // Dissolve the pale map before its SVG viewport edges can become visible.
+ opacity(map,mapAlpha*(1-ease((z-.08)/.34)));
+ opacity($('#map-wash'),mapAlpha*ease((z-.25)/.65));
 
  const dot=$('#map-dot'),diameter=mw*.083*mz;
  style(dot,'width',`${diameter}px`);style(dot,'height',`${diameter}px`);
