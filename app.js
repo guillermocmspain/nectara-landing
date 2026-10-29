@@ -32,6 +32,11 @@ for(let i=0;i<2;i++){
  const companion=historyFlight[0].cloneNode(true);companion.removeAttribute('id');companion.classList.add('history-companion');
  historyFlight[0].parentElement.append(companion);historyFlight.push(companion);
 }
+const loaderBees=Array.from({length:6},()=>{
+ const el=document.createElement('div');el.className='bee loader-guest';el.setAttribute('aria-hidden','true');el.innerHTML='<div class="bee-wings"></div>';
+ $('#loader-guests').append(el);return el;
+});
+let loaderFlightTime=0;
 const wingElements=[...document.querySelectorAll('.bee-wings')];
 
 // The same direct scroll timeline on desktop and mobile.
@@ -359,6 +364,18 @@ let loadTarget=0,loadShown=0,loadLast=0,loadDone=false,loadClosed=false;
 function loadProgress(){loadTarget=++completed/total*100}
 function animateLoader(now){
  const dt=loadLast?Math.min((now-loadLast)/1000,.05):1/60;loadLast=now;
+ loaderFlightTime+=dt;
+ const vw=innerWidth,vh=innerHeight;
+ loaderBees.forEach((el,i)=>{
+  const fromLeft=i%2===0,q=ease((loaderFlightTime-i*.14)/1.8);
+  const size=(vw<=760?28:42)+(i%3)*7;
+  const destination=vw*[.19,.78,.43,.20,.77,.52][i];
+  const x=mix(fromLeft?-size:vw+size,destination,q)+Math.sin(loaderFlightTime*.8+i)*8*q;
+  const y=vh*[.12,.18,.23,.77,.85,.91][i]+Math.sin(loaderFlightTime+i)*10*q;
+  style(el,'width',`${size}px`);
+  style(el,'transform',`translate3d(${x}px,${y}px,0) translate(-50%,-50%) scaleX(${fromLeft?1:-1})`);
+  opacity(el,reduced?0:1);
+ });
  // Follow measured resource completion continuously, with a bounded travel speed.
  const difference=loadTarget-loadShown;
  loadShown+=Math.min(difference,Math.min(48*dt,difference*(1-Math.exp(-dt/ .18))));
