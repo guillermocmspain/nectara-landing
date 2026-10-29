@@ -94,3 +94,6 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 @media(max-width:760px){.header-actions{gap:12px}#cart-open{width:40px;height:44px}.site-header{padding-inline:18px;gap:12px}}
 
 .preloader-backdrop{position:absolute;inset:var(--header) 0 0;pointer-events:none}.preloader-content{z-index:1}
+
+/* Mobile keeps the central label on a clean mint backdrop. */
+@media(max-width:760px){.botanical::before,.botanical::after{display:none}}
