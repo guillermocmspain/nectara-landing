@@ -122,11 +122,15 @@ function renderScene(u,t){
  opacity(jar,jarVisible);
  opacity($('.history-products'),ease((p-3.65)/.3));
  // Frontal approach from depth, then a lateral exit, entirely driven by scroll.
- const approach=ease((s-.835)/.025),depart=ease((s-.866)/.023);
+ const approach=ease((s-.835)/.025),turn=ease((s-.860)/.012),depart=ease((s-.872)/.018);
  const front=$('#history-guide'),frontWidth=mix(12,mobile?140:340,approach);
  const frontX=mix(mobile?W*.58:W*.48,mobile?W*.5:W*.40,approach);
  const edgeMargin=Math.max(0,(stage.clientWidth/scale-W)/2);
  const frontY=mobile?400:115;
+ const frontal=$('.history-front'),profile=$('.history-profile');
+ opacity(frontal,1-turn);opacity(profile,turn);
+ style(frontal,'transform',`perspective(800px) rotateY(${turn*55}deg)`);
+ style(profile,'transform',`translate(-50%,-50%) scaleX(${.72+.28*turn}) rotate(${(1-turn)*-4}deg)`);
  place(front,mix(frontX,W+edgeMargin+frontWidth,depart),frontY-12*Math.sin(depart*Math.PI),frontWidth,-4*depart,340);
  opacity(front,!reduced&&s>=.835&&s<.89?ease((s-.835)/.003):0);
  place(jar,jx,jy,jh,0,520);
