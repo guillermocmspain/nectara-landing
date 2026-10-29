@@ -158,14 +158,14 @@ function renderScene(u,t){
  }
  // Zoom about the exact marked location; the green point becomes the next backdrop.
  const map=$('#map-journey'),z=ease((s-.30)/.085),mz=Math.exp(z*Math.log(mobile?45:65));
- const mx=mobile?162:900,my=mobile?470:370;
- const cx=mix(mx,W/2,ease(z*2)),cy=mix(my,H/2,ease(z*2));
- const mw=mobile?330:520,mh=mw*519/628;
+ const mx=mobile?170:900,my=mobile?570:370;
+ const cx=mx,cy=my+Math.max(0,1-p)*H;
+ const mw=mobile?240:520,mh=mw*519/628;
  style(map,'width',`${W}px`);style(map,'height',`${H}px`);
  $('#map-vector').setAttribute('viewBox',`0 0 ${W} ${H}`);
  $('#map-drawing').setAttribute('transform',`translate(${cx} ${cy}) scale(${mw/628*mz}) translate(-251 -203)`);
  map.style.setProperty('--map-detail',(1-ease(z/.25)).toFixed(4));
- const mapAlpha=(s<.40?ease((p-.65)/.3):1-ease((s-.40)/.015))*(mobile?ease(originEnd):1);
+ const mapAlpha=s<.40?1:1-ease((s-.40)/.015);
  // Dissolve the pale map before its SVG viewport edges can become visible.
  opacity(map,mapAlpha*(1-ease((z-.08)/.34)));
  opacity($('#map-wash'),mapAlpha*ease((z-.25)/.65));
@@ -240,12 +240,27 @@ async function initJar(){
 measure();renderScene(current,0);requestTick();
 const core=['./assets/botanical.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp','./assets/jar-front.webp'];
 let completed=0;const total=core.length+1;
-function loadProgress(){const percent=Math.round(++completed/total*100);$('#load-percent').textContent=percent+'%';$('#load-fill').style.transform=`scaleX(${percent/100})`;$('.loader-flight .bee').style.left=`${percent}%`;$('#load-track').setAttribute('aria-valuenow',percent)}
+let loadTarget=0,loadShown=0,loadLast=0,loadDone=false,loadClosed=false;
+function loadProgress(){loadTarget=++completed/total*100}
+function animateLoader(now){
+ const dt=loadLast?Math.min((now-loadLast)/1000,.05):1/60;loadLast=now;
+ // Follow measured resource completion continuously, with a bounded travel speed.
+ const difference=loadTarget-loadShown;
+ loadShown+=Math.min(difference,Math.min(48*dt,difference*(1-Math.exp(-dt/ .18))));
+ if(loadDone&&loadTarget-loadShown<.05)loadShown=100;
+ const percent=Math.floor(loadShown);
+ $('#load-percent').textContent=percent+'%';$('#load-fill').style.transform=`scaleX(${loadShown/100})`;
+ $('.loader-flight .bee').style.transform=`translate3d(${loadShown/100*$('.loader-flight').clientWidth}px,0,0) translateX(-50%)`;
+ $('#load-track').setAttribute('aria-valuenow',percent);
+ if(loadDone&&loadShown===100&&!loadClosed){loadClosed=true;setTimeout(()=>{document.body.classList.add('is-loaded');$('#preloader').setAttribute('aria-hidden','true')},180);return}
+ requestAnimationFrame(animateLoader);
+}
+requestAnimationFrame(animateLoader);
 Promise.allSettled([...core.map(path=>loadImage(path).finally(loadProgress)),initJar().finally(loadProgress)]).then(results=>{
  const failures=results.filter(r=>r.status==='rejected');
  if(failures.length)console.warn('Some visual assets could not be prepared.',failures.map(r=>String(r.reason)));
  ready=true;state.ready=true;document.body.classList.add('is-ready');requestTick();
- setTimeout(()=>{document.body.classList.add('is-loaded');$('#preloader').setAttribute('aria-hidden','true')},250);
+ loadDone=true;
  if(location.hash.slice(1) in links)navigate(location.hash.slice(1),false);
 });
 // Read-only diagnostics make rendering and scroll verification reproducible.

@@ -59,3 +59,7 @@ En escritorio: títulos de 34 px y texto de 15 px, sin máscara, desplazamiento 
 ## Vuelos entre secciones
 
 Salidas y entradas por los laterales para abeja guía, tres abejas pequeñas y seis mariposas. Posiciones de producto con variación por visita y trayectorias reversibles ligadas al scroll. Regreso final desde fuera de pantalla hasta las posiciones originales. Comprobado a 1920 y 390 px: todos los insectos fuera del viewport durante origen e historia, opacidad 1 durante los vuelos, sin errores JavaScript. La mezcla final con la ilustración se conserva únicamente al posarse.
+
+## Preloader continuo y mapa estable
+
+Preloader con fondo botánico a pantalla completa y progreso interpolado por fotograma hacia el recuento real de recursos completados. Prueba: avance monotónico, incremento máximo de un punto porcentual entre muestras y final al 100 %. Abeja movida mediante transform. Mapa sin fundido de entrada ni recentrado durante el zoom: mismo anclaje comprobado en tres puntos de la sección a 1440 y 390 px. En móvil se reserva espacio bajo el texto. Revisión visual sin errores JavaScript.
