@@ -10,6 +10,7 @@ const media=matchMedia('(prefers-reduced-motion: reduce)');
 let reduced=media.matches;
 let mobile=false,W=1280,H=728,scale=1,range=1,current=0,target=0,raf=0,lastTime=0,clock=0,ready=false,needsMeasure=true;
 let menuTravel=null;
+let layoutWidth=innerWidth;
 let historyTime=0;const historyRenderers=[];
 let lastRaw=NaN,glJar=null,lastJarAngle=NaN,hidden=document.hidden,restoreProgress=null;
 const state={ready:false,webgl:false,progress:0,scene:0,reducedMotion:reduced,frames:0};
@@ -19,6 +20,8 @@ function opacity(el,v){style(el,'opacity',clamp(v).toFixed(4));style(el,'visibil
 function place(el,x,y,size,angle=0,base=193){style(el,'transform',`translate3d(${x.toFixed(3)}px,${y.toFixed(3)}px,0) translate(-50%,-50%) rotate(${angle.toFixed(3)}deg) scale(${(size/base).toFixed(5)})`)}
 const ambients=Array.from({length:3},(_,i)=>{const e=document.createElement('div');e.className='bee sprite ambient-bee';e.innerHTML='<div class="bee-wings"></div>';e.firstChild.style.animationDelay=`-${i*.07}s`;$('#ambient').append(e);return e});
 const butterflies=Array.from({length:6},(_,i)=>{const e=document.createElement('div');e.className='butterfly sprite';e.innerHTML='<img src="./assets/butterfly.webp" alt="" width="220" height="200">';e.firstChild.style.animationDelay=`-${i*.13}s`;e.firstChild.style.animationDuration=`${.44+i*.037}s`;$('#butterflies').append(e);return e});
+
+const wingElements=[...document.querySelectorAll('.bee-wings')];
 
 // The same direct scroll timeline on desktop and mobile.
 function storyTime(u){return u}
@@ -69,7 +72,16 @@ function measure(){
  if(!ready)current=target;
  needsMeasure=false;
 }
+function renderWings(t){
+ // Select whole atlas frames explicitly: no intermediate background offsets.
+ wingElements.forEach((el,i)=>{
+  const phase=(Math.floor(t*36)+i*2)%22;
+  const f=reduced?0:phase<=11?phase:22-phase;
+  style(el,'backgroundPosition',`${f*100/11}% center`);
+ });
+}
 function renderScene(u,t){
+ renderWings(t);
  const s=clamp(storyTime(u));
  opacity($('.origin-copy'),1-ease((s-.30)/.045));
 
@@ -210,7 +222,13 @@ for(const event of ['wheel','touchstart','pointerdown'])addEventListener(event,s
 addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' ','Escape'].includes(e.key))stopMenuTravel()});
 document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const key=a.dataset.go;history.replaceState(null,'',`#${key}`);navigate(key)}));
 addEventListener('scroll',()=>{if(!menuTravel)target=clamp(scrollY/range);requestTick()},{passive:true});
-addEventListener('resize',()=>{stopMenuTravel();if(ready)restoreProgress=storyTime(current);needsMeasure=true;requestTick()},{passive:true});
+addEventListener('resize',()=>{
+ // Mobile browser chrome changes height during a swipe. Never scroll back to
+ // the lagging animation position in response to those height-only events.
+ const widthChanged=Math.abs(innerWidth-layoutWidth)>1;
+ if(widthChanged){stopMenuTravel();if(ready)restoreProgress=clamp(scrollY/range);layoutWidth=innerWidth;}
+ needsMeasure=true;requestTick();
+},{passive:true});
 new ResizeObserver(()=>{needsMeasure=true;requestTick()}).observe(stage);
 document.addEventListener('visibilitychange',()=>{hidden=document.hidden;lastTime=0;if(hidden&&raf){cancelAnimationFrame(raf);raf=0}else requestTick()});
 addEventListener('popstate',()=>navigate(location.hash.slice(1),false));

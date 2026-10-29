@@ -118,3 +118,9 @@ Referencia leída en el tema local Poppr: panel completo, cierre circular y nave
 - Removed lateral product tilt while retaining cylindrical label rotation and product crossing.
 - Replaced floating cart with a header shopping bag and live quantity badge; removed Discover and floating motion control. System reduced-motion preference remains supported.
 - Edge checked at 1440x900, 390x844 and 360x640: upright WebGL jar, header fits, add-to-cart updates badge and bag reopens dialog; no page errors.
+
+## v26 — Mobile flight stability
+- Reviewed supplied 10.52s iPhone recording: browser chrome expands/collapses while the opening scene moves backward/forward; bee atlas is visibly split in some frames.
+- Height-only resize no longer restores lagging animation progress through scrollTo. Width changes preserve actual scroll progress; browser height updates only remeasure layout.
+- Wing atlas selects integer frames from the animation clock, avoiding interpolated CSS background positions; cached sprite elements and ping-pong frame sequence.
+- Edge mobile emulation: 20 resize events during scrolling caused zero programmatic scroll writes; sampled wing offsets resolve to integer frames; automatic history jar angle advances; no page errors. Physical iPhone verification remains external.
