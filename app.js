@@ -89,11 +89,11 @@ function renderScene(u,t){
  const jp=p<=2?p:p<=3?2:p-1;
  const jr=clamp(jp-1),jc=clamp(jp-2),leave=Math.max(0,jp-3);
  let jx,jy,jh;
- if(jp<=2){jx=mix(mobile?375:970,mobile?195:348,ease(jr));jy=mix(mobile?780:730,mobile?450:390,ease(jr));jh=mobile?350:520}
- else{jx=mix(mobile?195:348,mobile?195:935,ease(jc));jy=mix(mobile?450:390,mobile?520:398,ease(jc))-leave*H;jh=mix(mobile?350:520,mobile?330:520,ease(jc))}
+ if(jp<=2){jx=mix(mobile?375:970,mobile?195:348,ease(jr));jy=mix(mobile?780:730,mobile?510:390,ease(jr));jh=mobile?270:520}
+ else{jx=mix(mobile?195:348,mobile?195:935,ease(jc));jy=mix(mobile?510:390,mobile?520:398,ease(jc))-leave*H;jh=mix(mobile?270:520,mobile?270:520,ease(jc))}
  const cross=ease((s-.56)/.06);
  if(p>=2){
-  if(mobile){jx=mix(195,240,cross);jy=450-18*Math.sin(cross*Math.PI)-leave*H;}
+  if(mobile){jx=mix(195,240,cross);jy=510-18*Math.sin(cross*Math.PI)-leave*H;}
   else{jx=mix(348,935,cross);jy=mix(390,398,cross)-36*Math.sin(cross*Math.PI)-leave*H;}
  }
  opacity($('.product:not(.raw-product) .product-copy'),1-ease(cross/.45));
