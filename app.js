@@ -235,6 +235,30 @@ document.querySelectorAll('[data-label-open]').forEach(btn=>btn.addEventListener
 dialog.querySelector('.close-dialog').addEventListener('click',()=>dialog.close());
 dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close()}});
 
+const cartCatalog={cream:{name:'Miel cremada',price:'7,45 € – 10,45 €'},raw:{name:'Miel cruda',price:'6,95 € – 9,95 €'}};
+let cart={cream:0,raw:0};
+try{const saved=JSON.parse(localStorage.getItem('nectara-cart')||'{}');for(const key of Object.keys(cart))if(Number.isInteger(saved[key]))cart[key]=clamp(saved[key],0,99)}catch{}
+function renderCart(){
+ $('#cart-count').textContent=cart.cream+cart.raw;
+ $('#cart-items').replaceChildren();
+ for(const [key,product] of Object.entries(cartCatalog)){
+  if(!cart[key])continue;
+  const row=document.createElement('div');row.className='cart-row';
+  const title=document.createElement('h3');title.textContent=product.name;
+  const price=document.createElement('p');price.textContent=product.price+' · IVA incluido';
+  const controls=document.createElement('div');controls.className='cart-quantity';
+  for(const delta of [-1,1]){const button=document.createElement('button');button.type='button';button.textContent=delta<0?'−':'+';button.setAttribute('aria-label',(delta<0?'Quitar una unidad de ':'Añadir una unidad de ')+product.name);button.disabled=delta>0&&cart[key]>=99;button.addEventListener('click',()=>{cart[key]=clamp(cart[key]+delta,0,99);saveCart()});controls.append(button);if(delta<0){const count=document.createElement('span');count.textContent=cart[key];controls.append(count)}}
+  row.append(title,price,controls);$('#cart-items').append(row);
+ }
+ if(!cart.cream&&!cart.raw){const empty=document.createElement('p');empty.textContent='Tu carrito está vacío.';$('#cart-items').append(empty)}
+}
+function saveCart(){try{localStorage.setItem('nectara-cart',JSON.stringify(cart))}catch{}renderCart()}
+const cartDialog=$('#cart-dialog');
+document.querySelectorAll('[data-add-cart]').forEach(button=>button.addEventListener('click',()=>{const key=button.dataset.addCart;cart[key]=Math.min(99,cart[key]+1);saveCart();$('#cart-status').textContent=cartCatalog[key].name+' añadida al carrito';cartDialog.showModal()}));
+$('#cart-open').addEventListener('click',()=>{renderCart();cartDialog.showModal()});
+for(const id of ['cart-close','cart-continue'])$('#'+id).addEventListener('click',()=>cartDialog.close());
+renderCart();
+
 function loadImage(path){return new Promise((resolve,reject)=>{const im=new Image();im.decoding='async';im.onload=()=>im.decode().catch(()=>{}).then(()=>resolve(im));im.onerror=()=>reject(new Error(`Asset unavailable: ${path}`));im.src=new URL(path,import.meta.url).href})}
 async function initJar(){
  const canvas=$('#jar-canvas');

@@ -95,3 +95,7 @@ Ambos tarros usan render WebGL independiente para un giro completo cada 32 segun
 ## Alineación de las filas
 
 Origen e Historia centrados verticalmente en escritorio. Texto y pareja de tarros comparten centro; anclaje del mapa ajustado al mismo centro visual sin alterar su zoom. Revisión visual a 1440×900. Vistas móviles de 390 y 360 px mantienen disposición en columna y contenido dentro de pantalla, sin errores JavaScript.
+
+## Botones Añadir al carrito
+
+Sustituido el botón de etiqueta por Añadir al carrito y añadido su equivalente en miel cruda. Carrito local con cantidades, retirada de artículos y persistencia. No se inventan precios por formato ni se habilita un checkout sin conexión comercial: el diálogo informa de que formato/importe final están pendientes y la compra online no está habilitada. Probados en vista móvil: añadir ambos productos, recargar, persistencia, quitar miel cruda y cerrar con Escape. Sin errores JavaScript.
