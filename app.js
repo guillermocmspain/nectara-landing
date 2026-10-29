@@ -44,7 +44,7 @@ function sceneProgress(s){
  if(s<.88)return 4;
  return 4+ease((s-.88)/.075);
 }
-function artGeometry(){return mobile?{x:38.5,y:18,h:420,w:313,scale:420/577}:{x:457.5,y:69,h:490,w:365,scale:490/577}}
+function artGeometry(){return mobile?{x:38.5,y:0,h:420,w:313,scale:420/577}:{x:457.5,y:34,h:490,w:365,scale:490/577}}
 function closingGeometry(){return mobile?{x:105,y:8,h:242,w:180.35,scale:242/577}:{x:220,y:90,h:402,w:299.58,scale:402/577}}
 function guidePath(p){
  const g=artGeometry(),start=[g.x+224*g.scale,g.y+264*g.scale];
@@ -258,6 +258,15 @@ document.querySelectorAll('[data-add-cart]').forEach(button=>button.addEventList
 $('#cart-open').addEventListener('click',()=>{renderCart();cartDialog.showModal()});
 for(const id of ['cart-close','cart-continue'])$('#'+id).addEventListener('click',()=>cartDialog.close());
 renderCart();
+
+const mobileMenu=$('#mobile-menu'),menuOpen=$('#mobile-menu-open');
+function closeMobileMenu(){mobileMenu.close();document.body.classList.remove('menu-open');menuOpen.setAttribute('aria-expanded','false')}
+menuOpen.addEventListener('click',()=>{stopMenuTravel();mobileMenu.showModal();document.body.classList.add('menu-open');menuOpen.setAttribute('aria-expanded','true');$('#mobile-menu-close').focus()});
+$('#mobile-menu-close').addEventListener('click',closeMobileMenu);
+mobileMenu.addEventListener('close',()=>{document.body.classList.remove('menu-open');menuOpen.setAttribute('aria-expanded','false')});
+mobileMenu.querySelectorAll('[data-go]').forEach(link=>link.addEventListener('click',closeMobileMenu));
+$('#mobile-menu-cart').addEventListener('click',()=>{closeMobileMenu();renderCart();cartDialog.showModal()});
+addEventListener('resize',()=>{if(innerWidth>760&&mobileMenu.open)closeMobileMenu()},{passive:true});
 
 function loadImage(path){return new Promise((resolve,reject)=>{const im=new Image();im.decoding='async';im.onload=()=>im.decode().catch(()=>{}).then(()=>resolve(im));im.onerror=()=>reject(new Error(`Asset unavailable: ${path}`));im.src=new URL(path,import.meta.url).href})}
 async function initJar(){

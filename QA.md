@@ -99,3 +99,7 @@ Origen e Historia centrados verticalmente en escritorio. Texto y pareja de tarro
 ## Botones Añadir al carrito
 
 Sustituido el botón de etiqueta por Añadir al carrito y añadido su equivalente en miel cruda. Carrito local con cantidades, retirada de artículos y persistencia. No se inventan precios por formato ni se habilita un checkout sin conexión comercial: el diálogo informa de que formato/importe final están pendientes y la compra online no está habilitada. Probados en vista móvil: añadir ambos productos, recargar, persistencia, quitar miel cruda y cerrar con Escape. Sin errores JavaScript.
+
+## Menú móvil inspirado en Poppr y portada
+
+Referencia leída en el tema local Poppr: panel completo, cierre circular y navegación amplia; adaptación con paleta y fuentes de Néctara. Menú nativo dialog con foco contenido, cierre Escape, aria-expanded, enlaces de sección, correo y acceso al carrito. Verificado a 390×844 y 360×640 sin scroll del menú; enlace a miel mantiene el fundido verde y el carrito abre correctamente. Portada elevada 35 px lógicos en escritorio y 18 px en móvil, con trayectorias de insectos ajustadas. Flecha SVG ampliada a 64/62 px con movimiento suave que se desactiva al reducir movimiento. Sin errores JavaScript.

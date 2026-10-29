@@ -12,8 +12,8 @@
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <link rel="preload" as="image" href="./assets/botanical.webp" fetchpriority="high">
   <link rel="preload" as="image" href="./assets/art-complete.webp" fetchpriority="high">
-  <link rel="stylesheet" href="./styles.css?v=18">
-  <script type="module" src="./app.js?v=18"></script>
+  <link rel="stylesheet" href="./styles.css?v=19">
+  <script type="module" src="./app.js?v=19"></script>
 </head>
 <body>
   <div id="preloader" role="status" aria-label="Preparando Néctara">
@@ -23,12 +23,18 @@
   <a class="skip-link" href="#origen" data-go="origen">Ir al contenido</a>
   <header class="site-header">
     <a class="wordmark" href="#inicio" data-go="inicio" aria-label="Néctara, inicio">NÉCTARA</a>
-    <nav aria-label="Navegación principal">
+    <nav class="desktop-nav" aria-label="Navegación principal">
       <a href="#origen" data-go="origen">El origen</a>
       <a href="#miel" data-go="miel">Nuestra miel</a>
       <a class="header-cta" href="#miel" data-go="miel">Descubrir <span aria-hidden="true">↗</span></a>
     </nav>
+    <button class="mobile-menu-toggle" id="mobile-menu-open" type="button" aria-label="Abrir menú" aria-haspopup="dialog" aria-expanded="false" aria-controls="mobile-menu"><span>Menú</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
   </header>
+  <dialog id="mobile-menu" aria-labelledby="mobile-menu-title">
+    <div class="mobile-menu-head"><span id="mobile-menu-title" class="wordmark">NÉCTARA</span><button id="mobile-menu-close" type="button" aria-label="Cerrar menú"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+    <nav class="mobile-menu-links" aria-label="Navegación móvil"><a href="#inicio" data-go="inicio">Inicio</a><a href="#origen" data-go="origen">El origen</a><a href="#miel" data-go="miel">Nuestra miel</a><a href="#coleccion" data-go="coleccion">Nuestra historia</a><a href="#cierre" data-go="cierre">Contacto</a></nav>
+    <div class="mobile-menu-bottom"><p>DE NUESTRAS COLMENAS A TU MESA</p><div class="mobile-menu-tagline">Auténtica<br><em>miel natural.</em></div><div class="mobile-menu-actions"><a href="mailto:mielnectara@gmail.com">Escríbenos ↗</a><button id="mobile-menu-cart" type="button">Ver carrito ↗</button></div></div>
+  </dialog>
 
   <div id="menu-veil" aria-hidden="true"></div>
   <main id="story" aria-label="La historia de Néctara">
@@ -49,7 +55,7 @@
             <img class="art-full" id="opening-full" src="./assets/art-complete.webp" width="430" height="577" alt="">
           </div>
           <img class="brand-lockup" src="./assets/brand.webp" width="1000" height="230" alt="Néctara, auténtica miel natural">
-          <a class="scroll-cue" href="#origen" data-go="origen" aria-label="Baja para descubrir el origen"><span aria-hidden="true">↓</span></a>
+          <a class="scroll-cue" href="#origen" data-go="origen" aria-label="Baja para descubrir el origen"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5v21M7 17l9 9 9-9"/></svg></a>
         </section>
 
         <section class="scene origin" id="origen" data-scene="1" aria-labelledby="origin-title">
