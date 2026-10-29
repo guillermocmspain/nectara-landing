@@ -124,3 +124,10 @@ Referencia leída en el tema local Poppr: panel completo, cierre circular y nave
 - Height-only resize no longer restores lagging animation progress through scrollTo. Width changes preserve actual scroll progress; browser height updates only remeasure layout.
 - Wing atlas selects integer frames from the animation clock, avoiding interpolated CSS background positions; cached sprite elements and ping-pong frame sequence.
 - Edge mobile emulation: 20 resize events during scrolling caused zero programmatic scroll writes; sampled wing offsets resolve to integer frames; automatic history jar angle advances; no page errors. Physical iPhone verification remains external.
+
+## v31 — Frontal bee approach in Historia
+- Added assets/bee-front.webp, generated with built-in ImageGen from assets/bee.webp, preserving transparency and converted to WebP.
+- Prompt: turn reference bee into head-on frontal flight facing viewer; preserve vintage natural-history engraved illustration, golden/black fuzzy bee, dark eyes, delicate veined extended wings and natural legs; entire isolated bee, transparent background, no text/flowers/cartoon face.
+- Scroll .835–.860 grows bee from 12px to 340px desktop / 140px mobile; .866–.889 exits right beyond viewport. No time-based replay and hidden outside this beat or for reduced motion.
+- Mobile history typography/spacing leaves a clear lane between prose and jars.
+- Edge tested desktop 1440x900 and mobile 390x844: increasing bounds, fully offscreen exit, no page errors; screenshots checked for text overlap.

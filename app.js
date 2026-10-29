@@ -121,6 +121,14 @@ function renderScene(u,t){
  const jarVisible=ease((s-.415)/.025)*(jp<3.95?1:0)*(1-ease((p-3.25)/.45));
  opacity(jar,jarVisible);
  opacity($('.history-products'),ease((p-3.65)/.3));
+ // Frontal approach from depth, then a lateral exit, entirely driven by scroll.
+ const approach=ease((s-.835)/.025),depart=ease((s-.866)/.023);
+ const front=$('#history-guide'),frontWidth=mix(12,mobile?140:340,approach);
+ const frontX=mix(mobile?W*.58:W*.48,mobile?W*.5:W*.40,approach);
+ const edgeMargin=Math.max(0,(stage.clientWidth/scale-W)/2);
+ const frontY=mobile?400:115;
+ place(front,mix(frontX,W+edgeMargin+frontWidth,depart),frontY-12*Math.sin(depart*Math.PI),frontWidth,-4*depart,340);
+ opacity(front,!reduced&&s>=.835&&s<.89?ease((s-.835)/.003):0);
  place(jar,jx,jy,jh,0,520);
  const raw=cross;
  let degrees=s<.56?360*ease((s-.44)/.115):s<.62?360:360+360*ease((s-.625)/.11);
@@ -331,7 +339,7 @@ async function initJar(){
 }
 
 measure();renderScene(current,0);requestTick();
-const core=['./assets/botanical-complete.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp','./assets/jar-front.webp'];
+const core=['./assets/botanical-complete.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp','./assets/jar-front.webp','./assets/bee-front.webp'];
 let completed=0;const total=core.length+1;
 let loadTarget=0,loadShown=0,loadLast=0,loadDone=false,loadClosed=false;
 function loadProgress(){loadTarget=++completed/total*100}
