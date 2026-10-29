@@ -27,6 +27,11 @@ const looseButterflies=Array.from({length:3},(_,i)=>{
  el.firstChild.style.animationDuration=`${.7+i*.13}s`;el.firstChild.style.animationDelay=`-${i*.21}s`;
  $('#loose-butterflies').append(el);return el;
 });
+const historyFlight=[$('#history-guide')];
+for(let i=0;i<2;i++){
+ const companion=historyFlight[0].cloneNode(true);companion.removeAttribute('id');companion.classList.add('history-companion');
+ historyFlight[0].parentElement.append(companion);historyFlight.push(companion);
+}
 const wingElements=[...document.querySelectorAll('.bee-wings')];
 
 // The same direct scroll timeline on desktop and mobile.
@@ -122,17 +127,22 @@ function renderScene(u,t){
  opacity(jar,jarVisible);
  opacity($('.history-products'),ease((p-3.65)/.3));
  // Frontal approach from depth, then a lateral exit, entirely driven by scroll.
- const approach=ease((s-.835)/.025),turn=ease((s-.860)/.012),depart=ease((s-.872)/.018);
- const front=$('#history-guide'),frontWidth=mix(12,mobile?140:340,approach);
- const frontX=mix(mobile?W*.58:W*.48,mobile?W*.5:W*.40,approach);
  const edgeMargin=Math.max(0,(stage.clientWidth/scale-W)/2);
- const frontY=mobile?400:115;
- const frontal=$('.history-front'),profile=$('.history-profile');
- opacity(frontal,1-turn);opacity(profile,turn);
- style(frontal,'transform',`perspective(800px) rotateY(${turn*55}deg)`);
- style(profile,'transform',`translate(-50%,-50%) scaleX(${.72+.28*turn}) rotate(${(1-turn)*-4}deg)`);
- place(front,mix(frontX,W+edgeMargin+frontWidth,depart),frontY-12*Math.sin(depart*Math.PI),frontWidth,-4*depart,340);
- opacity(front,!reduced&&s>=.835&&s<.89?ease((s-.835)/.003):0);
+ historyFlight.forEach((front,i)=>{
+  const delay=i*.0015,local=s-delay;
+  const approach=ease((local-.835)/.025),turn=ease((local-.860)/.012);
+  const depart=ease((s-(.872+delay))/(.018-delay));
+  const fullWidth=i?(mobile?48:110):(mobile?140:340),frontWidth=mix(6,fullWidth,approach);
+  const offset=i?(i===1?-1:1)*(mobile?112:255)*approach:0;
+  const frontX=mix(mobile?W*.58:W*.48,mobile?W*.5:W*.40,approach)+offset;
+  const frontY=(mobile?400:115)+(i?(i===1?12:-10):0);
+  const frontal=front.querySelector('.history-front'),profile=front.querySelector('.history-profile');
+  opacity(frontal,1-turn);opacity(profile,turn);
+  style(frontal,'transform',`perspective(800px) rotateY(${turn*55}deg)`);
+  style(profile,'transform',`translate(-50%,-50%) scaleX(${.72+.28*turn}) rotate(${(1-turn)*-4}deg)`);
+  place(front,mix(frontX,W+edgeMargin+frontWidth,depart),frontY-12*Math.sin(depart*Math.PI),frontWidth,-4*depart,340);
+  opacity(front,!reduced&&local>=.835&&s<.89?ease((local-.835)/.003):0);
+ });
  place(jar,jx,jy,jh,0,520);
  const raw=cross;
  let degrees=s<.56?360*ease((s-.44)/.115):s<.62?360:360+360*ease((s-.625)/.11);
