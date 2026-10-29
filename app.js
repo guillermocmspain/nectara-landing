@@ -11,6 +11,7 @@ let reduced=media.matches;
 try{const saved=localStorage.getItem('nectara-motion');if(saved!==null)reduced=saved==='reduced'}catch{}
 let mobile=false,W=1280,H=728,scale=1,range=1,current=0,target=0,raf=0,lastTime=0,clock=0,ready=false,needsMeasure=true;
 let menuTravel=null;
+let historyTime=0;const historyRenderers=[];
 let lastRaw=NaN,glJar=null,lastJarAngle=NaN,hidden=document.hidden,restoreProgress=null;
 const state={ready:false,webgl:false,progress:0,scene:0,reducedMotion:reduced,frames:0};
 const cache=new WeakMap();
@@ -109,6 +110,11 @@ function renderScene(u,t){
  if(reduced)degrees=0;
  if(glJar&&jarVisible>.001&&(!Number.isFinite(lastJarAngle)||Math.abs(degrees-lastJarAngle)>.008||raw!==lastRaw)){glJar.draw(degrees,raw);lastJarAngle=degrees;lastRaw=raw}
  style($('#jar-fallback'),'filter',`brightness(${1-raw*.25}) saturate(${1+raw*.2})`);
+ if(p>3.65&&p<5){
+  const autoAngle=reduced?0:(historyTime*11.25)%360;
+  historyRenderers.forEach((renderer,i)=>renderer?.draw(i?-autoAngle:autoAngle,i));
+  state.historyAngle=autoAngle;
+ }
  state.raw=raw;
  state.jarDegrees=degrees;
 
@@ -166,7 +172,7 @@ function tick(now){
  raf=0;if(hidden)return;
  if(needsMeasure)measure();
  const dt=lastTime?Math.min((now-lastTime)/1000,.05):1/60;lastTime=now;
- if(!reduced)clock+=dt;
+ if(!reduced){clock+=dt;if(state.scene>3.65&&state.scene<5)historyTime+=dt;}
  if(menuTravel){
   menuTravel.elapsed+=dt;
   if(menuTravel.mode==='green'){
@@ -235,8 +241,8 @@ async function initJar(){
  const images=await Promise.all(['./assets/jar-blank.webp','./assets/label.webp','./assets/jar-seal.webp'].map(loadImage));
  const sealCanvas=document.createElement('canvas');sealCanvas.width=100;sealCanvas.height=650;
  const ctx=sealCanvas.getContext('2d');ctx.fillStyle='#cda640';ctx.fillRect(0,0,100,650);ctx.translate(50,30);ctx.rotate(Math.PI/2);ctx.fillStyle='#302719';ctx.font='34px Arial';ctx.fillText('MIEL CRUDA · MILFLORES',0,12);images.push(sealCanvas);
- function setup(){
-  const gl=canvas.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'});
+ function setup(renderCanvas=canvas){
+  const gl=renderCanvas.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'});
   if(!gl)return null;
   const vertex=`attribute vec2 a_position;varying vec2 v_uv;void main(){v_uv=(a_position*vec2(1.0,-1.0)+1.0)*.5;gl_Position=vec4(a_position,0.0,1.0);}`;
   const fragment=`precision highp float;varying vec2 v_uv;uniform sampler2D u_base;uniform sampler2D u_label;uniform sampler2D u_seal;uniform float u_angle;uniform float u_raw;uniform sampler2D u_rawseal;const float PI=3.141592653589793;void main(){vec4 b=texture2D(u_base,v_uv);float nx=clamp((v_uv.x-.5)/.499,-.99999,.99999);float theta=asin(nx);float curve=sqrt(1.0-nx*nx);float top=.315+.035*curve;float bottom=.855+.056*curve;float v=clamp((v_uv.y-top)/(bottom-top),0.0,1.0);float u=fract(.5+theta/(2.0*PI)+u_angle/(2.0*PI));vec3 ink=texture2D(u_label,vec2(u,v)).rgb;vec3 printed=clamp(ink/vec3(.91372549,.95294118,.91764706),0.0,1.1)*b.rgb;float coverage=clamp((v_uv.y-top)*1198.0,0.0,1.0)*clamp((bottom-v_uv.y)*1198.0,0.0,1.0)*b.a*clamp((1.0-abs(nx))*348.5,0.0,1.0);float honey=step(.16,v_uv.y)*(1.0-coverage);vec3 amber=b.rgb*vec3(.72,.46,.23);vec3 color=mix(mix(b.rgb,amber,u_raw*honey),printed,coverage);float front=mod(theta+u_angle+PI,2.0*PI)-PI;if(abs(front)<.155&&v_uv.y>=.043&&v_uv.y<=top&&b.a>.4){float sv=clamp((v_uv.y-.043)/(top-.043),0.0,1.0);vec3 seal=texture2D(u_seal,vec2((front+.155)/.31,sv)).rgb;seal=mix(seal,texture2D(u_rawseal,vec2((front+.155)/.31,sv)).rgb,u_raw);color=seal*(.72+.28*curve);}gl_FragColor=vec4(color*b.a,b.a);}`;
@@ -246,14 +252,15 @@ async function initJar(){
   const pos=gl.getAttribLocation(program,'a_position');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
   images.forEach((im,i)=>{const tex=gl.createTexture();gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);gl.uniform1i(gl.getUniformLocation(program,['u_base','u_label','u_seal','u_rawseal'][i]),i)});
   const angle=gl.getUniformLocation(program,'u_angle'),raw=gl.getUniformLocation(program,'u_raw');
-  const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(360*dpr);canvas.height=Math.round(620*dpr);gl.viewport(0,0,canvas.width,canvas.height);
+  const dpr=Math.min(devicePixelRatio||1,2);renderCanvas.width=Math.round(360*dpr);renderCanvas.height=Math.round(620*dpr);gl.viewport(0,0,renderCanvas.width,renderCanvas.height);
   return {draw(deg,r=0){gl.uniform1f(raw,r);gl.uniform1f(angle,deg*Math.PI/180);gl.drawArrays(gl.TRIANGLES,0,6)}};
  }
  glJar=setup();if(glJar){
-  for(const [id,rawValue] of [['history-cream',0],['history-raw',1]]){
-   const preview=$('#'+id);glJar.draw(0,rawValue);
-   preview.getContext('2d').drawImage(canvas,0,0,preview.width,preview.height);
-   preview.parentElement.classList.add('has-preview');
+  for(const [i,id] of ['history-cream','history-raw'].entries()){
+   const preview=$('#'+id),renderer=setup(preview);historyRenderers[i]=renderer;
+   if(renderer){renderer.draw(0,i);preview.parentElement.classList.add('has-preview');}
+   preview.addEventListener('webglcontextlost',e=>{e.preventDefault();historyRenderers[i]=null;preview.parentElement.classList.remove('has-preview')});
+   preview.addEventListener('webglcontextrestored',()=>{try{historyRenderers[i]=setup(preview);if(historyRenderers[i])preview.parentElement.classList.add('has-preview');requestTick()}catch{preview.parentElement.classList.remove('has-preview')}});
   }
   glJar.draw(0);lastJarAngle=NaN;jar.classList.add('ready');state.webgl=true;
  }

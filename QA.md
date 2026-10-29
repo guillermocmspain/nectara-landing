@@ -87,3 +87,7 @@ Nuestra miel usa un fundido verde de 1,52 s, sin recorrer visualmente las seccio
 ## Ambos productos en Historia
 
 Pareja frontal de miel cremada y miel cruda con sus nombres, tonos y precintos diferenciados. Vistas generadas una vez con el mismo render del producto, sin nuevas descargas de imágenes ni WebGL adicional. El tarro individual deja paso a la pareja en Historia. Revisadas vistas 1440, 390 y 360 px: sin errores JavaScript, ambos renders presentes y sin superponer texto y tarros. Ajustada la altura móvil para dejar libre el control de movimiento.
+
+## Giro automático de la pareja
+
+Ambos tarros usan render WebGL independiente para un giro completo cada 32 segundos, en sentidos opuestos. Solo se actualizan mientras la sección está visible y se detienen con movimiento reducido o pestaña oculta. Prueba sin scroll: ángulo de 4,88° a 50,29° con scrollY constante (8514); p95 17 ms, ningún fotograma >50 ms y sin errores JavaScript. Movimiento reducido devuelve ambas vistas al frontal.
