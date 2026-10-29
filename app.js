@@ -10,7 +10,7 @@ const media=matchMedia('(prefers-reduced-motion: reduce)');
 let reduced=media.matches;
 try{const saved=localStorage.getItem('nectara-motion');if(saved!==null)reduced=saved==='reduced'}catch{}
 let mobile=false,W=1280,H=728,scale=1,range=1,current=0,target=0,raf=0,lastTime=0,clock=0,ready=false,needsMeasure=true;
-let glJar=null,lastJarAngle=NaN,hidden=document.hidden,restoreProgress=null;
+let lastRaw=NaN,glJar=null,lastJarAngle=NaN,hidden=document.hidden,restoreProgress=null;
 const state={ready:false,webgl:false,progress:0,scene:0,reducedMotion:reduced,frames:0};
 const cache=new WeakMap();
 function style(el,key,value){let memo=cache.get(el);if(!memo){memo={};cache.set(el,memo)}if(memo[key]!==value){el.style[key]=value;memo[key]=value}}
@@ -22,12 +22,14 @@ const butterflies=Array.from({length:6},(_,i)=>{const e=document.createElement('
 function sceneProgress(s){
  if(s<.08)return .12*ease(s/.08);
  if(s<.24)return .12+.88*ease((s-.08)/.16);
- if(s<.30)return 1;
- if(s<.44)return 1+.95*ease((s-.30)/.14);
- if(s<.70)return 1.95+.1*(s-.44)/.26;
- if(s<.84)return 2.05+.95*ease((s-.70)/.14);
- if(s<.88)return 3;
- return 3+ease((s-.88)/.075);
+ if(s<.37)return 1;
+ if(s<.40)return 1+ease((s-.37)/.03);
+ if(s<.56)return 2;
+ if(s<.62)return 2+ease((s-.56)/.06);
+ if(s<.74)return 3;
+ if(s<.84)return 3+ease((s-.74)/.10);
+ if(s<.88)return 4;
+ return 4+ease((s-.88)/.075);
 }
 function artGeometry(){return mobile?{x:38.5,y:18,h:420,w:313,scale:420/577}:{x:457.5,y:69,h:490,w:365,scale:490/577}}
 function guidePath(p){
@@ -58,7 +60,7 @@ function renderScene(s,t){
  const p=sceneProgress(s),g=artGeometry(),take=ease((s-.005)/.035),land=ease((s-.978)/.014),returning=ease((s-.89)/.085);
  const finished=s>=.993;
  document.body.classList.toggle('is-finished',finished);
- for(let i=0;i<5;i++){
+ for(let i=0;i<6;i++){
   const delta=i-p,visible=Math.abs(delta)<1.06;
   style(sceneEls[i],'transform',`translate3d(0,${(delta*H).toFixed(3)}px,0)`);
   style(sceneEls[i],'visibility',visible?'visible':'hidden');
@@ -70,19 +72,23 @@ function renderScene(s,t){
  opacity(closingFull,reduced?1:land);
 
  // The full wrap turns through 360°, with a long, slowly scrolling product beat.
- const jr=clamp(p-1),jc=clamp(p-2),leave=Math.max(0,p-3);
+ const jp=p<=2?p:p<=3?2:p-1;
+ const jr=clamp(jp-1),jc=clamp(jp-2),leave=Math.max(0,jp-3);
  let jx,jy,jh;
- if(p<=2){jx=mix(mobile?375:970,mobile?195:348,ease(jr));jy=mix(mobile?780:730,mobile?450:390,ease(jr));jh=mobile?350:520}
+ if(jp<=2){jx=mix(mobile?375:970,mobile?195:348,ease(jr));jy=mix(mobile?780:730,mobile?450:390,ease(jr));jh=mobile?350:520}
  else{jx=mix(mobile?195:348,mobile?195:935,ease(jc));jy=mix(mobile?450:390,mobile?520:398,ease(jc))-leave*H;jh=mix(mobile?350:520,mobile?330:520,ease(jc))}
- const jarVisible=ease((p-1.02)/.3)*(p<3.95?1:0);
+ const jarVisible=ease((s-.415)/.025)*(jp<3.95?1:0);
  opacity(jar,jarVisible);
  place(jar,jx,jy,jh,reduced?0:Math.sin(p*1.4)*2.5,520);
- let degrees=p<1.95?45*ease((p-1.02)/.93):p<=2.05?45+270*ease((p-1.95)/.1):315+45*ease((p-2.05)/.95);
+ const raw=ease((s-.565)/.045);
+ let degrees=s<.56?360*ease((s-.44)/.115):s<.62?360:360+360*ease((s-.625)/.11);
  if(reduced)degrees=0;
- if(glJar&&jarVisible>.001&&(!Number.isFinite(lastJarAngle)||Math.abs(degrees-lastJarAngle)>.008)){glJar.draw(degrees);lastJarAngle=degrees}
+ if(glJar&&jarVisible>.001&&(!Number.isFinite(lastJarAngle)||Math.abs(degrees-lastJarAngle)>.008||raw!==lastRaw)){glJar.draw(degrees,raw);lastJarAngle=degrees;lastRaw=raw}
+ style($('#jar-fallback'),'filter',`brightness(${1-raw*.25}) saturate(${1+raw*.2})`);
+ state.raw=raw;
  state.jarDegrees=degrees;
 
- let flight=guidePath(Math.min(p,3));
+ let flight=guidePath(Math.min(jp,3));
  const beforeClose=guidePath(3);
  if(s>.88){
   const dest=[g.x+224*g.scale,g.y+264*g.scale];
@@ -91,7 +97,8 @@ function renderScene(s,t){
  const drift=take*(1-returning);
  flight.x+=Math.sin(t*.95)*1.2*drift;flight.y+=Math.sin(t*1.2)*1.8*drift;
  place(guide,flight.x,flight.y,flight.size,flight.angle);
- opacity(guide,reduced?0:take*(1-land));
+ const clean=1-ease((s-.275)/.025)+ease((s-.44)/.025);
+ opacity(guide,reduced?0:take*(1-land)*clean);
 
  // Small bees have the same solid rendering as the guide, never ghosted.
  const ambientSizes=mobile?[26,30,22]:[37,45,28];
@@ -103,7 +110,7 @@ function renderScene(s,t){
   x=mix(x,dest[0],returning);y=mix(y,dest[1],returning);
   place(ambients[j],x,y,mix(ambientSizes[j],mobile?19:25,returning),0);
   ambients[j].firstChild.style.transform=speed<0?'scaleX(-1)':'';
-  opacity(ambients[j],reduced?0:1);
+  opacity(ambients[j],reduced?0:clean);
  }
 
  const slots=[[112,87,44],[62,121,36],[98,151,27],[347,48,39],[33,230,29],[42,281,27]];
@@ -132,8 +139,22 @@ function renderScene(s,t){
    x+=Math.sin(t*1.7+j)*12*Math.sin(q*Math.PI);y+=Math.sin(t*1.3+j*2)*9*Math.sin(q*Math.PI);
    alpha=1-land;angle=Math.sin(t+j)*12*(1-q);
   }
-  place(butterflies[j],x,y,size,angle,40);opacity(butterflies[j],reduced?0:alpha);
+  place(butterflies[j],x,y,size,angle,40);opacity(butterflies[j],reduced?0:alpha*clean);
  }
+ // Zoom about the exact marked location; the green point becomes the next backdrop.
+ const map=$('#map-journey'),z=ease((s-.30)/.085),mz=Math.exp(z*Math.log(mobile?45:65));
+ const mx=mobile?162:900,my=mobile?470:370;
+ const cx=mix(mx,W/2,ease(z*2)),cy=mix(my,H/2,ease(z*2));
+ const mw=mobile?330:520,mh=mw*519/628;
+ style(map,'width',`${mw}px`);style(map,'height',`${mh}px`);
+ style(map,'transform',`translate3d(${cx-mw*.3997}px,${cy-mh*.3911}px,0) scale(${mz})`);
+ const mapAlpha=s<.40?ease((p-.65)/.3):1-ease((s-.40)/.015);
+ opacity(map,mapAlpha);
+ if(mapAlpha<.001)style(map,'transform','translate3d(0,0,0)');
+ const dot=$('#map-dot'),diameter=mw*.083*mz;
+ style(dot,'width',`${diameter}px`);style(dot,'height',`${diameter}px`);
+ style(dot,'transform',`translate3d(${cx-diameter/2}px,${cy-diameter/2}px,0)`);opacity(dot,mapAlpha);
+ state.mapZoom=mz;state.cleanTransition=clean<.001;
  const track=document.querySelector('.progress-track');
  style($('#progress-thumb'),'transform',`translate3d(0,${(s*Math.max(0,track.clientHeight-44)).toFixed(3)}px,0)`);
  state.progress=s;state.scene=p;state.frames++;
@@ -149,7 +170,7 @@ function tick(now){
  if(Math.abs(target-current)>.00002||(!reduced&&current<.993))requestTick();
 }
 function requestTick(){if(!raf&&!hidden)raf=requestAnimationFrame(tick)}
-const links={inicio:0,origen:.275,miel:.55,coleccion:.86,cierre:1};
+const links={inicio:0,origen:.275,miel:.49,cruda:.68,coleccion:.86,cierre:1};
 function navigate(key,smooth=true){if(!(key in links))return;measure();const y=links[key]*range;window.scrollTo({top:y,behavior:smooth&&!reduced?'smooth':'instant'});target=links[key];requestTick()}
 document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const key=a.dataset.go;history.replaceState(null,'',`#${key}`);navigate(key)}));
 addEventListener('scroll',()=>{target=clamp(scrollY/range);requestTick()},{passive:true});
@@ -176,19 +197,21 @@ function loadImage(path){return new Promise((resolve,reject)=>{const im=new Imag
 async function initJar(){
  const canvas=$('#jar-canvas');
  const images=await Promise.all(['./assets/jar-blank.webp','./assets/label.webp','./assets/jar-seal.webp'].map(loadImage));
+ const sealCanvas=document.createElement('canvas');sealCanvas.width=100;sealCanvas.height=650;
+ const ctx=sealCanvas.getContext('2d');ctx.fillStyle='#cda640';ctx.fillRect(0,0,100,650);ctx.translate(50,30);ctx.rotate(Math.PI/2);ctx.fillStyle='#302719';ctx.font='34px Arial';ctx.fillText('MIEL CRUDA · MILFLORES',0,12);images.push(sealCanvas);
  function setup(){
   const gl=canvas.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'});
   if(!gl)return null;
   const vertex=`attribute vec2 a_position;varying vec2 v_uv;void main(){v_uv=(a_position*vec2(1.0,-1.0)+1.0)*.5;gl_Position=vec4(a_position,0.0,1.0);}`;
-  const fragment=`precision highp float;varying vec2 v_uv;uniform sampler2D u_base;uniform sampler2D u_label;uniform sampler2D u_seal;uniform float u_angle;const float PI=3.141592653589793;void main(){vec4 b=texture2D(u_base,v_uv);float nx=clamp((v_uv.x-.5)/.499,-.99999,.99999);float theta=asin(nx);float curve=sqrt(1.0-nx*nx);float top=.315+.035*curve;float bottom=.855+.056*curve;float v=clamp((v_uv.y-top)/(bottom-top),0.0,1.0);float u=fract(.5+theta/(2.0*PI)+u_angle/(2.0*PI));vec3 ink=texture2D(u_label,vec2(u,v)).rgb;vec3 printed=clamp(ink/vec3(.91372549,.95294118,.91764706),0.0,1.1)*b.rgb;float coverage=clamp((v_uv.y-top)*1198.0,0.0,1.0)*clamp((bottom-v_uv.y)*1198.0,0.0,1.0)*b.a*clamp((1.0-abs(nx))*348.5,0.0,1.0);vec3 color=mix(b.rgb,printed,coverage);float front=mod(theta+u_angle+PI,2.0*PI)-PI;if(abs(front)<.155&&v_uv.y>=.043&&v_uv.y<=top&&b.a>.4){float sv=clamp((v_uv.y-.043)/(top-.043),0.0,1.0);vec3 seal=texture2D(u_seal,vec2((front+.155)/.31,sv)).rgb;color=seal*(.72+.28*curve);}gl_FragColor=vec4(color*b.a,b.a);}`;
+  const fragment=`precision highp float;varying vec2 v_uv;uniform sampler2D u_base;uniform sampler2D u_label;uniform sampler2D u_seal;uniform float u_angle;uniform float u_raw;uniform sampler2D u_rawseal;const float PI=3.141592653589793;void main(){vec4 b=texture2D(u_base,v_uv);float nx=clamp((v_uv.x-.5)/.499,-.99999,.99999);float theta=asin(nx);float curve=sqrt(1.0-nx*nx);float top=.315+.035*curve;float bottom=.855+.056*curve;float v=clamp((v_uv.y-top)/(bottom-top),0.0,1.0);float u=fract(.5+theta/(2.0*PI)+u_angle/(2.0*PI));vec3 ink=texture2D(u_label,vec2(u,v)).rgb;vec3 printed=clamp(ink/vec3(.91372549,.95294118,.91764706),0.0,1.1)*b.rgb;float coverage=clamp((v_uv.y-top)*1198.0,0.0,1.0)*clamp((bottom-v_uv.y)*1198.0,0.0,1.0)*b.a*clamp((1.0-abs(nx))*348.5,0.0,1.0);float honey=step(.16,v_uv.y)*(1.0-coverage);vec3 amber=b.rgb*vec3(.72,.46,.23);vec3 color=mix(mix(b.rgb,amber,u_raw*honey),printed,coverage);float front=mod(theta+u_angle+PI,2.0*PI)-PI;if(abs(front)<.155&&v_uv.y>=.043&&v_uv.y<=top&&b.a>.4){float sv=clamp((v_uv.y-.043)/(top-.043),0.0,1.0);vec3 seal=texture2D(u_seal,vec2((front+.155)/.31,sv)).rgb;seal=mix(seal,texture2D(u_rawseal,vec2((front+.155)/.31,sv)).rgb,u_raw);color=seal*(.72+.28*curve);}gl_FragColor=vec4(color*b.a,b.a);}`;
   function shader(type,source){const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(s));return s}
   const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,vertex));gl.attachShader(program,shader(gl.FRAGMENT_SHADER,fragment));gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw new Error(gl.getProgramInfoLog(program));gl.useProgram(program);
   const buf=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buf);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
   const pos=gl.getAttribLocation(program,'a_position');gl.enableVertexAttribArray(pos);gl.vertexAttribPointer(pos,2,gl.FLOAT,false,0,0);
-  images.forEach((im,i)=>{const tex=gl.createTexture();gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);gl.uniform1i(gl.getUniformLocation(program,['u_base','u_label','u_seal'][i]),i)});
-  const angle=gl.getUniformLocation(program,'u_angle');
+  images.forEach((im,i)=>{const tex=gl.createTexture();gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,im);gl.uniform1i(gl.getUniformLocation(program,['u_base','u_label','u_seal','u_rawseal'][i]),i)});
+  const angle=gl.getUniformLocation(program,'u_angle'),raw=gl.getUniformLocation(program,'u_raw');
   const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(360*dpr);canvas.height=Math.round(620*dpr);gl.viewport(0,0,canvas.width,canvas.height);
-  return {draw(deg){gl.uniform1f(angle,deg*Math.PI/180);gl.drawArrays(gl.TRIANGLES,0,6)}};
+  return {draw(deg,r=0){gl.uniform1f(raw,r);gl.uniform1f(angle,deg*Math.PI/180);gl.drawArrays(gl.TRIANGLES,0,6)}};
  }
  glJar=setup();if(glJar){glJar.draw(0);jar.classList.add('ready');state.webgl=true}
  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();glJar=null;jar.classList.remove('ready');state.webgl=false});
@@ -196,11 +219,14 @@ async function initJar(){
 }
 
 measure();renderScene(current,0);requestTick();
-const core=['./assets/botanical.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp'];
-Promise.allSettled([...core.map(loadImage),initJar()]).then(results=>{
+const core=['./assets/botanical.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp','./assets/spain-map.png','./assets/jar-front.webp'];
+let completed=0;const total=core.length+1;
+function loadProgress(){const percent=Math.round(++completed/total*100);$('#load-percent').textContent=percent+'%';$('#load-fill').style.transform=`scaleX(${percent/100})`;$('.loader-flight .bee').style.left=`${percent}%`;$('#load-track').setAttribute('aria-valuenow',percent)}
+Promise.allSettled([...core.map(path=>loadImage(path).finally(loadProgress)),initJar().finally(loadProgress)]).then(results=>{
  const failures=results.filter(r=>r.status==='rejected');
  if(failures.length)console.warn('Some visual assets could not be prepared.',failures.map(r=>String(r.reason)));
  ready=true;state.ready=true;document.body.classList.add('is-ready');requestTick();
+ setTimeout(()=>{document.body.classList.add('is-loaded');$('#preloader').setAttribute('aria-hidden','true')},250);
  if(location.hash.slice(1) in links)navigate(location.hash.slice(1),false);
 });
 // Read-only diagnostics make rendering and scroll verification reproducible.

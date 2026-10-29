@@ -25,3 +25,13 @@ Pruebas automatizadas con Microsoft Edge/Chromium en modo headless, sobre el ser
 Estas cifras describen el entorno de prueba, no una garantía para todos los dispositivos. Las vistas móviles son emuladas; no equivalen a una prueba física en Safari/iPhone o en todos los dispositivos Android.
 
 Los recursos gráficos ocupan aproximadamente 2 MB. No se incluyen bibliotecas de animación, dependencias de ejecución externas ni vídeo para simular el scroll.
+
+## Actualización: preloader, mapa y miel cruda
+
+- Carga bloqueada de un recurso: el indicador permanece en 89 % y alcanza el 100 % al liberarlo, antes de retirar el preloader.
+- Mapa original con punto en las mismas coordenadas. Color muestreado de la referencia: RGB 48, 66, 48 (#304230).
+- Zoom y aparición del texto antes del tarro; abeja guía, abejas pequeñas y mariposas ocultas durante la transición.
+- Segundo producto con miel oscurecida en el shader, etiqueta conservada y precinto dorado «Miel cruda · Milflores». Giro propio de 360°.
+- Revisión visual en escritorio y móvil; corregido un recorte de composición al redimensionar el mapa.
+- Repetidas pruebas de navegación, diálogo y movimiento reducido; sin errores JavaScript, recursos fallidos ni desbordamientos a 360 y 390 px.
+- Recorrido de 6 segundos: 360 muestras, p95 16,8 ms, máximo 16,9 ms, ninguna muestra superior a 50 ms. Pruebas en Edge headless; móvil emulado.

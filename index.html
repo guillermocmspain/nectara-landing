@@ -12,10 +12,14 @@
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <link rel="preload" as="image" href="./assets/botanical.webp" fetchpriority="high">
   <link rel="preload" as="image" href="./assets/art-complete.webp" fetchpriority="high">
-  <link rel="stylesheet" href="./styles.css">
-  <script type="module" src="./app.js"></script>
+  <link rel="stylesheet" href="./styles.css?v=2">
+  <script type="module" src="./app.js?v=2"></script>
 </head>
 <body>
+  <div id="preloader" role="status" aria-label="Preparando Néctara">
+    <div class="preloader-content"><div class="loader-flight"><div class="bee"><div class="bee-wings"></div></div></div>
+    <div id="load-track" role="progressbar" aria-label="Recursos cargados" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="load-fill"></span></div><p id="load-percent">0%</p></div>
+  </div>
   <a class="skip-link" href="#origen" data-go="origen">Ir al contenido</a>
   <header class="site-header">
     <a class="wordmark" href="#inicio" data-go="inicio" aria-label="Néctara, inicio">NÉCTARA</a>
@@ -32,8 +36,9 @@
         <div class="backdrop botanical" data-scene="0"></div>
         <div class="backdrop cream" data-scene="1"></div>
         <div class="backdrop green" data-scene="2"></div>
-        <div class="backdrop mint" data-scene="3"></div>
-        <div class="backdrop botanical" data-scene="4"></div>
+        <div class="backdrop green" data-scene="3"></div>
+        <div class="backdrop mint" data-scene="4"></div>
+        <div class="backdrop botanical" data-scene="5"></div>
       </div>
       <div class="world" id="world">
         <section class="scene hero" id="inicio" data-scene="0" aria-label="Néctara, auténtica miel natural">
@@ -52,7 +57,7 @@
             <p class="description">Entre los ríos Eresma y Pirón,<br class="desktop-break"> el trabajo paciente de las abejas<br class="desktop-break"> y el amor por la naturaleza.</p>
             <p class="place">SEGOVIA</p>
           </div>
-          <img class="origin-art" src="./assets/art-empty.webp" width="430" height="577" alt="Apicultores y naturaleza ilustrados en la etiqueta de Néctara.">
+          
         </section>
 
         <section class="scene product" id="miel" data-scene="2" aria-labelledby="product-title">
@@ -65,9 +70,12 @@
           </div>
         </section>
 
-        <section class="scene collection" id="coleccion" data-scene="3" aria-labelledby="collection-title">
+        <section class="scene product raw-product" id="cruda" data-scene="3" aria-labelledby="raw-title">
+          <div class="copy product-copy"><p class="eyebrow">03 / NUESTRA MIEL</p><h2 id="raw-title">Miel<br><em>cruda.</em></h2><p class="weight">Néctara · Milflores</p><p class="description">Un ámbar más profundo.</p></div>
+        </section>
+        <section class="scene collection" id="coleccion" data-scene="4" aria-labelledby="collection-title">
           <div class="copy collection-copy">
-            <p class="eyebrow">03 / DE LA COLMENA A TU MESA</p>
+            <p class="eyebrow">04 / DE LA COLMENA A TU MESA</p>
             <h2 id="collection-title">Una historia<br><em>en cada tarro.</em></h2>
             <p class="description">Sigue descubriendo Néctara.</p>
             <a class="pill" href="#miel" data-go="miel">Explorar nuestra miel <span aria-hidden="true">↗</span></a>
@@ -75,7 +83,7 @@
           </div>
         </section>
 
-        <section class="scene closing" id="cierre" data-scene="4" aria-label="El regreso al origen: la etiqueta de Néctara se recompone">
+        <section class="scene closing" id="cierre" data-scene="5" aria-label="El regreso al origen: la etiqueta de Néctara se recompone">
           <div class="hero-art art-stack">
             <img src="./assets/art-empty.webp" width="430" height="577" alt="La ilustración de Néctara espera el regreso de la abeja y las mariposas.">
             <img class="art-full" id="closing-full" src="./assets/art-complete.webp" width="430" height="577" alt="La etiqueta completa de Néctara.">
@@ -83,6 +91,7 @@
           <img class="brand-lockup" src="./assets/brand.webp" width="1000" height="230" alt="Néctara, auténtica miel natural">
         </section>
 
+        <div id="map-journey" aria-label="Ubicación de nuestras colmenas en Segovia"><img src="./assets/spain-map.png" width="628" height="519" alt="Mapa de España con el punto de origen de Néctara en Segovia"></div><div id="map-dot" aria-hidden="true"></div>
         <div class="product-visual" id="jar" aria-label="Tarro Néctara de 450 gramos con su etiqueta completa" role="img">
           <div class="jar-shadow"></div>
           <img id="jar-fallback" src="./assets/jar-front.webp" width="582" height="1000" alt="">
@@ -110,6 +119,6 @@
     <a class="pill" href="./assets/label.webp" target="_blank" rel="noopener">Abrir en grande ↗</a>
   </dialog>
 
-  <noscript><style>#story{height:auto}.stage{position:relative;height:auto;overflow:visible}.world{position:relative;transform:none;width:100%;height:auto}.scene{position:relative;height:auto;min-height:600px}.copy{position:relative;left:auto;top:auto;padding:48px}.hero{height:700px}.closing,.product-visual,.sprite,.backdrops,.origin-art,.loading-indicator,.motion-toggle{display:none}.world .hero-art{left:calc(50% - 182px)}.world .brand-lockup{left:calc(50% - 265px)}</style></noscript>
+  <noscript><style>#preloader{display:none!important}body{overflow:auto!important}#story{height:auto}.stage{position:relative;height:auto;overflow:visible}.world{position:relative;transform:none;width:100%;height:auto}.scene{position:relative;height:auto;min-height:600px}.copy{position:relative;left:auto;top:auto;padding:48px}.hero{height:700px}.closing,.product-visual,.sprite,.backdrops,.origin-art,.loading-indicator,.motion-toggle{display:none}.world .hero-art{left:calc(50% - 182px)}.world .brand-lockup{left:calc(50% - 265px)}</style></noscript>
 </body>
 </html>
