@@ -79,3 +79,7 @@ Añadidos los rangos de precio con IVA y las descripciones de las capturas. Tama
 ## Navegación progresiva del menú
 
 Recorrido controlado por fotograma con curva de aceleración y frenada suaves y duración proporcional a la distancia. Eliminada la asignación anticipada del destino que provocaba el salto inicial. Verificado inicio→miel: progreso monotónico hasta 0,49, paso máximo observado 0,00333. La rueda interrumpe el recorrido, los clics sucesivos sustituyen el destino y movimiento reducido conserva navegación inmediata. Sin errores JavaScript.
+
+## Acceso directo a miel cremada
+
+Nuestra miel usa un fundido verde de 1,52 s, sin recorrer visualmente las secciones. Cambio de posición únicamente con la capa al 100 % de opacidad; destino 0,44 con escena 2 y tarro frontal a 0 grados. Verificado por fotogramas: un único salto bajo cobertura opaca, capa retirada al terminar y sin errores JavaScript.

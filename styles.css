@@ -52,3 +52,5 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 @media(max-width:760px){.closing .hero-art{left:105px;top:8px;width:180.35px;height:242px}.closing .brand-lockup{left:95px;top:255px;width:200px}.closing::after{left:65px;top:240px;width:260px;height:80px}.contact-card{left:28px;top:330px;width:334px;padding:20px 22px;border-radius:12px}.contact-card .eyebrow{font-size:9px;margin-bottom:10px}.contact-card h2{font-size:29px;margin-bottom:18px}.contact-card h2 br{display:none}.contact-card h2 em::before{content:' '}.contact-card address{font-size:15px;line-height:1.5}.contact-card address p{margin-bottom:14px}.contact-card address span{font-size:10px}}
 
 @media(min-width:761px){.closing::after{left:70px;top:475px;width:600px;height:190px;background:radial-gradient(ellipse,var(--mint) 55%,transparent 75%)}}
+
+#menu-veil{position:fixed;inset:var(--header) 0 0;z-index:18;background:var(--green);opacity:0;visibility:hidden;pointer-events:none;will-change:opacity}

@@ -168,10 +168,22 @@ function tick(now){
  if(!reduced)clock+=dt;
  if(menuTravel){
   menuTravel.elapsed+=dt;
-  const q=clamp(menuTravel.elapsed/menuTravel.duration),e=q*q*q*(q*(q*6-15)+10);
-  target=mix(menuTravel.from,menuTravel.to,e);
-  window.scrollTo({top:target*range,behavior:'instant'});
-  if(q===1)menuTravel=null;
+  if(menuTravel.mode==='green'){
+   const elapsed=menuTravel.elapsed;
+   const alpha=elapsed<.6?ease(elapsed/.6):elapsed<.72?1:1-ease((elapsed-.72)/.8);
+   opacity($('#menu-veil'),alpha);
+   if(elapsed>=.6&&!menuTravel.arrived){
+    target=menuTravel.to;current=target;
+    window.scrollTo({top:target*range,behavior:'instant'});
+    menuTravel.arrived=true;
+   }
+   if(elapsed>=1.52){opacity($('#menu-veil'),0);menuTravel=null;}
+  }else{
+   const q=clamp(menuTravel.elapsed/menuTravel.duration),e=q*q*q*(q*(q*6-15)+10);
+   target=mix(menuTravel.from,menuTravel.to,e);
+   window.scrollTo({top:target*range,behavior:'instant'});
+   if(q===1)menuTravel=null;
+  }
  }
  state.navigating=!!menuTravel;
  const diff=target-current;
@@ -180,13 +192,14 @@ function tick(now){
  if(menuTravel||Math.abs(target-current)>.00002||(!reduced&&current<.993))requestTick();
 }
 function requestTick(){if(!raf&&!hidden)raf=requestAnimationFrame(tick)}
-const links={inicio:0,origen:.275,miel:.49,cruda:.68,coleccion:.86,cierre:1};
-function stopMenuTravel(){if(!menuTravel)return;menuTravel=null;target=clamp(scrollY/range);requestTick()}
+const links={inicio:0,origen:.275,miel:.44,cruda:.68,coleccion:.86,cierre:1};
+function stopMenuTravel(){if(!menuTravel)return;menuTravel=null;opacity($('#menu-veil'),0);target=clamp(scrollY/range);requestTick()}
 function navigate(key,smooth=true){
  if(!(key in links))return;
  stopMenuTravel();measure();
  const destination=physicalTime(links[key]),from=clamp(scrollY/range),distance=Math.abs(destination-from);
  if(!smooth||reduced||distance<.0001){window.scrollTo({top:destination*range,behavior:'instant'});target=destination;requestTick();return}
+ if(key==='miel'){menuTravel={mode:'green',to:destination,elapsed:0,arrived:false};lastTime=performance.now();requestTick();return}
  // Ease both acceleration and braking; do not assign the final target ahead of the scroll.
  menuTravel={from,to:destination,elapsed:0,duration:1.2+7*distance};
  lastTime=performance.now();requestTick();
