@@ -19,31 +19,15 @@ function place(el,x,y,size,angle=0,base=193){style(el,'transform',`translate3d($
 const ambients=Array.from({length:3},(_,i)=>{const e=document.createElement('div');e.className='bee sprite ambient-bee';e.innerHTML='<div class="bee-wings"></div>';e.firstChild.style.animationDelay=`-${i*.07}s`;$('#ambient').append(e);return e});
 const butterflies=Array.from({length:6},(_,i)=>{const e=document.createElement('div');e.className='butterfly sprite';e.innerHTML='<img src="./assets/butterfly.webp" alt="" width="220" height="200">';e.firstChild.style.animationDelay=`-${i*.13}s`;e.firstChild.style.animationDuration=`${.44+i*.037}s`;$('#butterflies').append(e);return e});
 
-// Extra native-scroll reading time, with the visual story held at each article.
-const readingHolds=[{at:.275,start:.18425,end:.33425,selector:'.origin-copy'},{at:.86,start:.7262,end:.9062,selector:'.collection-copy'}];
-function storyTime(u){if(!mobile)return u;if(u<.18425)return u/.67;if(u<.33425)return .275;if(u<.7262)return (u-.15)/.67;if(u<.9062)return .86;return (u-.33)/.67}
-function physicalTime(s){if(!mobile)return s;return s*.67+(s>.275?.15:0)+(s>.86?.18:0)}
-let readingExtents=[0,0];
-// Stable per-visit variation: never choose new positions in an animation frame.
-const flightOffsets=Array.from({length:10},()=>[Math.random()*24-12,Math.random()*20-10]);
+// The same direct scroll timeline on desktop and mobile.
+function storyTime(u){return u}
+function physicalTime(s){return s}
 function flightRoute(id,home,s,t){
  const margin=Math.max(0,(stage.clientWidth/scale-W)/2)+180;
- const side=id%2?W+margin:-margin;
- const edge={x:side,y:H*(.2+(id%4)*.18)};
- const cream=mobile?[[305,300],[35,350],[350,680],[55,690],[65,320],[355,360],[25,580],[350,590],[100,705],[290,705]]:[[570,130],[80,110],[1200,650],[680,620],[620,280],[1130,90],[70,600],[550,660],[1210,370],[420,80]];
- const raw=mobile?[[85,320],[355,350],[45,670],[340,695],[325,300],[35,400],[365,540],[55,570],[285,710],[110,700]]:[[590,110],[1200,120],[80,640],[690,660],[680,280],[80,90],[1210,590],[530,640],[70,350],[1040,80]];
- function position(arr){return {x:arr[id][0]+flightOffsets[id][0]+Math.sin(t*.8+id)*7,y:arr[id][1]+flightOffsets[id][1]+Math.sin(t*1.1+id*2)*9}}
- const a=position(cream),b=position(raw);
- function travel(a,b,q){return {x:mix(a.x,b.x,q),y:mix(a.y,b.y,q)+Math.sin(q*Math.PI)*(id%2?24:-30)}}
- const delay=(id%4)*.002;
+ const edge={x:id%2?W+margin:-margin,y:H*(.2+(id%4)*.18)};
  if(s<.18)return home;
- if(s<.245)return travel(home,edge,ease((s-.18-delay)/(.065-delay)));
- if(s<.44)return edge;
- if(s<.49)return travel(edge,a,ease((s-.44-delay)/(.05-delay)));
- if(s<.56)return a;
- if(s<.63)return travel(a,b,ease((s-.56-delay)/(.07-delay)));
- if(s<.755)return b;
- if(s<.82)return travel(b,edge,ease((s-.755-delay)/(.065-delay)));
+ if(s<.245){const delay=(id%4)*.002,q=ease((s-.18-delay)/(.065-delay));return {x:mix(home.x,edge.x,q),y:mix(home.y,edge.y,q)+Math.sin(q*Math.PI)*(id%2?24:-30)}}
+ // Stay outside during origin, both products and history; return only for the closing illustration.
  return edge;
 }
 function sceneProgress(s){
@@ -81,14 +65,11 @@ function measure(){
  range=Math.max(1,story.offsetHeight-rect.height-parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')));
  if(restoreProgress!==null){target=physicalTime(restoreProgress);current=target;restoreProgress=null;window.scrollTo({top:target*range,behavior:'instant'})}else target=clamp(scrollY/range);
  if(!ready)current=target;
- readingExtents=readingHolds.map(h=>{const e=$(h.selector);return Math.max(0,e.querySelector('.reading-text').scrollHeight-e.querySelector('.reading-window').clientHeight)});
  needsMeasure=false;
 }
 function renderScene(u,t){
  const s=clamp(storyTime(u));
- readingHolds.forEach((h,i)=>{const q=mobile?clamp((u-h.start)/(h.end-h.start)):0;style($(h.selector+' .reading-text'),'transform',`translate3d(0,${-q*readingExtents[i]}px,0)`);opacity($(h.selector+' .reading-cue'),1-ease((q-.9)/.1))});
- const originEnd=clamp((u-.33425)/.016);
- opacity($('.origin-copy'),mobile?1-ease(originEnd):1-ease((s-.30)/.045));
+ opacity($('.origin-copy'),1-ease((s-.30)/.045));
 
  const p=sceneProgress(s),g=artGeometry(),take=ease((s-.005)/.035),land=ease((s-.978)/.014),returning=ease((s-.89)/.085);
  const finished=s>=.993;
@@ -137,7 +118,7 @@ function renderScene(u,t){
  }else if(s>=.245){guideSize=mobile?78:102;guideAngle=Math.sin(t*.7)*3;}
  place(guide,flight.x,flight.y,guideSize,guideAngle);
  opacity(guide,reduced?0:take*(1-land));
- const clean=(s>=.245&&s<=.44)||(s>=.82&&s<=.88)?0:1;
+ const clean=s>=.245&&s<=.88?0:1;
  const ambientSizes=mobile?[26,30,22]:[37,45,28];
  for(let j=0;j<3;j++){
   const speed=[22,-17,13][j]*(mobile?.5:1);

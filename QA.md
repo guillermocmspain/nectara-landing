@@ -63,3 +63,7 @@ Salidas y entradas por los laterales para abeja guía, tres abejas pequeñas y s
 ## Preloader continuo y mapa estable
 
 Preloader con fondo botánico a pantalla completa y progreso interpolado por fotograma hacia el recuento real de recursos completados. Prueba: avance monotónico, incremento máximo de un punto porcentual entre muestras y final al 100 %. Abeja movida mediante transform. Mapa sin fundido de entrada ni recentrado durante el zoom: mismo anclaje comprobado en tres puntos de la sección a 1440 y 390 px. En móvil se reserva espacio bajo el texto. Revisión visual sin errores JavaScript.
+
+## Productos limpios y textos breves
+
+Ambos artículos resumidos en dos párrafos. Eliminadas las pausas y el desplazamiento interno de lectura en todas las resoluciones; recorrido móvil reducido de 1700 a 900 svh. Insectos fuera de pantalla desde origen hasta la transición final, incluidas las dos mieles. Comprobados ambos productos sin sprites visibles y dos párrafos completos por artículo a 1440×900, 390×844 y 360×640; sin máscaras, transformaciones del texto ni errores JavaScript.

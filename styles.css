@@ -40,3 +40,7 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 .preloader-content{position:relative;padding:30px 26px 20px;border-radius:50%;background:radial-gradient(ellipse,#e9f3eaf5 0%,#e9f3eac9 48%,#e9f3ea00 73%)}
 .loader-flight .bee{left:0;transition:none;will-change:transform}#load-fill{transition:none;will-change:transform}#load-track{height:3px;background:#30423040}#load-percent{font-size:18px}
 @media(max-width:760px){.origin-copy .reading-window{height:300px}.origin-copy .reading-cue{margin-top:7px}.preloader-content{width:86vw;padding:30px 20px}}
+
+/* Concise articles fit without an internal reading viewport. */
+.reading-window,.origin-copy .reading-window{height:auto;overflow:visible;mask-image:none}.reading-text{padding:0;transform:none!important;will-change:auto}.reading-cue{display:none}
+@media(max-width:760px){#story{height:900svh}.reading-window{margin-top:20px}.reading-text p{font-size:15px;line-height:1.5;margin-bottom:16px}}
