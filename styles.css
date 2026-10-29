@@ -79,3 +79,5 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 .botanical::before{left:0;background-position:left center}
 .botanical::after{right:0;background-position:right center}
 @media(max-width:760px){.botanical::before,.botanical::after{top:auto;bottom:0;width:50%;height:66.6667vw}}
+
+@media(min-width:761px) and (max-width:1100px){.desktop-nav{gap:18px}.site-header{padding-inline:24px}.header-cta{padding:12px 16px}}

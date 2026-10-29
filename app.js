@@ -175,7 +175,7 @@ function tick(now){
  if(!reduced){clock+=dt;if(state.scene>3.65&&state.scene<5)historyTime+=dt;}
  if(menuTravel){
   menuTravel.elapsed+=dt;
-  if(menuTravel.mode==='green'){
+  if(menuTravel.mode==='fade'){
    const elapsed=menuTravel.elapsed;
    const alpha=elapsed<.6?ease(elapsed/.6):elapsed<.72?1:1-ease((elapsed-.72)/.8);
    opacity($('#menu-veil'),alpha);
@@ -185,11 +185,6 @@ function tick(now){
     menuTravel.arrived=true;
    }
    if(elapsed>=1.52){opacity($('#menu-veil'),0);menuTravel=null;}
-  }else{
-   const q=clamp(menuTravel.elapsed/menuTravel.duration),e=q*q*q*(q*(q*6-15)+10);
-   target=mix(menuTravel.from,menuTravel.to,e);
-   window.scrollTo({top:target*range,behavior:'instant'});
-   if(q===1)menuTravel=null;
   }
  }
  state.navigating=!!menuTravel;
@@ -205,10 +200,11 @@ function navigate(key,smooth=true){
  if(!(key in links))return;
  stopMenuTravel();measure();
  const destination=physicalTime(links[key]),from=clamp(scrollY/range),distance=Math.abs(destination-from);
- if(!smooth||reduced||distance<.0001){window.scrollTo({top:destination*range,behavior:'instant'});target=destination;requestTick();return}
- if(key==='miel'){menuTravel={mode:'green',to:destination,elapsed:0,arrived:false};lastTime=performance.now();requestTick();return}
- // Ease both acceleration and braking; do not assign the final target ahead of the scroll.
- menuTravel={from,to:destination,elapsed:0,duration:1.2+7*distance};
+ if(!smooth||reduced||distance<.0001){window.scrollTo({top:destination*range,behavior:'instant'});target=destination;current=destination;requestTick();return}
+ // Swap scenes only under a fully opaque veil; never traverse intermediate sections.
+ const color=key==='miel'||key==='cruda'?'var(--green)':key==='origen'?'var(--cream)':'var(--mint)';
+ style($('#menu-veil'),'background',color);
+ menuTravel={mode:'fade',to:destination,elapsed:0,arrived:false};
  lastTime=performance.now();requestTick();
 }
 for(const event of ['wheel','touchstart','pointerdown'])addEventListener(event,stopMenuTravel,{passive:true});
