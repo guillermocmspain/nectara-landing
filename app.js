@@ -43,6 +43,7 @@ function sceneProgress(s){
  return 4+ease((s-.88)/.075);
 }
 function artGeometry(){return mobile?{x:38.5,y:18,h:420,w:313,scale:420/577}:{x:457.5,y:69,h:490,w:365,scale:490/577}}
+function closingGeometry(){return mobile?{x:105,y:8,h:242,w:180.35,scale:242/577}:{x:220,y:90,h:402,w:299.58,scale:402/577}}
 function guidePath(p){
  const g=artGeometry(),start=[g.x+224*g.scale,g.y+264*g.scale];
  let x,y,size,angle,q;
@@ -71,7 +72,7 @@ function renderScene(u,t){
  const s=clamp(storyTime(u));
  opacity($('.origin-copy'),1-ease((s-.30)/.045));
 
- const p=sceneProgress(s),g=artGeometry(),take=ease((s-.005)/.035),land=ease((s-.978)/.014),returning=ease((s-.89)/.085);
+ const p=sceneProgress(s),g=s>.88?closingGeometry():artGeometry(),take=ease((s-.005)/.035),land=ease((s-.978)/.014),returning=ease((s-.89)/.085);
  const finished=s>=.993;
  document.body.classList.toggle('is-finished',finished);
  for(let i=0;i<6;i++){
@@ -114,7 +115,7 @@ function renderScene(u,t){
  if(s>.88){
   const edge=flightRoute(0,home,.88,t),q=returning;
   flight={x:cubic(edge.x,edge.x+150,g.x+120*g.scale,g.x+224*g.scale,q),y:cubic(edge.y,edge.y-50,g.y+330*g.scale,g.y+264*g.scale,q)};
-  guideSize=mix(mobile?78:102,mobile?165:193,q);guideAngle=-5*Math.sin(q*Math.PI);
+  guideSize=mix(mobile?78:102,227*g.scale,q);guideAngle=-5*Math.sin(q*Math.PI);
  }else if(s>=.245){guideSize=mobile?78:102;guideAngle=Math.sin(t*.7)*3;}
  place(guide,flight.x,flight.y,guideSize,guideAngle);
  opacity(guide,reduced?0:take*(1-land));
@@ -124,7 +125,7 @@ function renderScene(u,t){
   const speed=[22,-17,13][j]*(mobile?.5:1);
   const initial={x:((180+j*(W*.32)+t*speed)%(W+360)+W+360)%(W+360)-180,y:H*[.28,.81,.60][j]+Math.sin(t*.7+j*2)*18};
   let pos=flightRoute(j+1,initial,s,t);
-  if(s>.88){const dest=mobile?[[34,330],[356,340],[349,590]][j]:[[192,294],[1103,302],[1108,564]][j];pos={x:mix(pos.x,dest[0],returning),y:mix(pos.y,dest[1],returning)+Math.sin(returning*Math.PI)*35};}
+  if(s>.88){const dest=mobile?[[40,150],[350,190],[350,300]][j]:[[130,170],[570,150],[570,600]][j];pos={x:mix(pos.x,dest[0],returning),y:mix(pos.y,dest[1],returning)+Math.sin(returning*Math.PI)*35};}
   place(ambients[j],pos.x,pos.y,mix(ambientSizes[j],mobile?19:25,returning),Math.sin(t+j)*3);
   opacity(ambients[j],reduced?0:1);
  }

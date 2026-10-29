@@ -71,3 +71,7 @@ Ambos artículos resumidos en dos párrafos. Eliminadas las pausas y el desplaza
 ## Información de los productos
 
 Añadidos los rangos de precio con IVA y las descripciones de las capturas. Tamaños 450/750 g para la miel cremada, los únicos desplegados en la referencia. Texto sin contenedores de scroll; tarro móvil reducido y desplazado para dejar espacio. Revisado a 1440×900, 390×844 y 360×640: texto completo, separación positiva entre descripción y tarro en móvil, sin desbordamiento horizontal ni errores JavaScript.
+
+## Contacto en el cierre
+
+Última sección con dirección facilitada (Calle Caserón, nº 8, 40393 Escobar de Polendos), correo mielnectara@gmail.com y teléfono 606 66 31 81. Enlaces mailto y tel verificados. Ilustración reducida y destinos finales de insectos recalculados para conservar la recomposición. Revisado a 1440×900, 390×844 y 360×640: contacto completo dentro de pantalla, enlaces habilitados, sin errores JavaScript.
