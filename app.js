@@ -25,7 +25,7 @@ const looseButterflies=Array.from({length:3},(_,i)=>{
  const el=document.createElement('div');el.className='butterfly sprite loose-butterfly';el.setAttribute('aria-hidden','true');
  el.innerHTML='<img src="./assets/butterfly.webp" alt="" width="220" height="200">';
  el.firstChild.style.animationDuration=`${.7+i*.13}s`;el.firstChild.style.animationDelay=`-${i*.21}s`;
- $('#butterflies').append(el);return el;
+ $('#loose-butterflies').append(el);return el;
 });
 const wingElements=[...document.querySelectorAll('.bee-wings')];
 
@@ -145,25 +145,24 @@ function renderScene(u,t){
  place(guide,flight.x,flight.y,guideSize,guideAngle);
  opacity(guide,reduced?0:take*(1-land));
  const clean=s>=.245&&s<=.88?0:1;
+ opacity($('#opening-ambient'),p<1?1:0);
  const ambientSizes=mobile?[26,30,22]:[37,45,28];
  for(let j=0;j<3;j++){
   const speed=[22,-17,13][j]*(mobile?.5:1);
   const initial={x:((180+j*(W*.32)+t*speed)%(W+360)+W+360)%(W+360)-180,y:H*[.28,.81,.60][j]+Math.sin(t*.7+j*2)*18};
-  let pos=flightRoute(j+1,initial,s,t);
-  if(s>.88){const dest=mobile?[[40,150],[350,190],[350,300]][j]:[[130,170],[570,150],[570,600]][j];pos={x:mix(pos.x,dest[0],returning),y:mix(pos.y,dest[1],returning)+Math.sin(returning*Math.PI)*35};}
-  place(ambients[j],pos.x,pos.y,mix(ambientSizes[j],mobile?19:25,returning),Math.sin(t+j)*3);
+  place(ambients[j],initial.x,initial.y,ambientSizes[j],Math.sin(t+j)*3);
   opacity(ambients[j],reduced?0:1);
  }
- // Additional opening butterflies stay away from the central label and leave via the sides.
+ // Decorative insects stay in opening-scene coordinates, clipped to that scene.
  looseButterflies.forEach((el,i)=>{
   const side=i===1?1:-1;
   const x=mobile?(side<0?24:W-24):(side<0?W*.22:W*.78);
   const y=H*[.19,.25,.58][i];
   const drift=mobile?8:30;
   const home={x:x+Math.sin(t*.29+i*2)*drift+Math.sin(t*.53+i)*drift*.2,y:y+Math.sin(t*.37+i*1.7)*(mobile?13:24)};
-  const pos=flightRoute(i===1?11:10,home,s,t);
+  const pos=home;
   place(el,pos.x,pos.y,mobile?20+i*2:29+i*4,Math.sin(t*.41+i)*10,40);
-  opacity(el,!reduced&&s<.245&&(!mobile||i<2)?1:0);
+  opacity(el,!reduced&&(!mobile||i<2)?1:0);
  });
  const slots=[[112,87,44],[62,121,36],[98,151,27],[347,48,39],[33,230,29],[42,281,27]];
  for(let j=0;j<6;j++){

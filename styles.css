@@ -100,3 +100,5 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 
 .scroll-cue-label{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);white-space:nowrap;font:11px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.07em;color:var(--ink)}
 @media(min-width:761px){.scroll-cue{top:630px}}
+
+#opening-ambient{position:absolute;inset:0;overflow:hidden;pointer-events:none}

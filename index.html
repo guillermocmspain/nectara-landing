@@ -12,8 +12,8 @@
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <link rel="preload" as="image" href="./assets/botanical-complete.webp" fetchpriority="high">
   <link rel="preload" as="image" href="./assets/art-complete.webp" fetchpriority="high">
-  <link rel="stylesheet" href="./styles.css?v=29">
-  <script type="module" src="./app.js?v=29"></script>
+  <link rel="stylesheet" href="./styles.css?v=30">
+  <script type="module" src="./app.js?v=30"></script>
 </head>
 <body>
   <div id="preloader" role="status" aria-label="Preparando Néctara">
@@ -55,6 +55,7 @@
       <div id="map-wash" aria-hidden="true"></div>
       <div class="world" id="world">
         <section class="scene hero" id="inicio" data-scene="0" aria-label="Néctara, auténtica miel natural">
+          <div id="opening-ambient" aria-hidden="true"><div id="ambient"></div><div id="loose-butterflies"></div></div>
           <div class="hero-art art-stack">
             <img src="./assets/art-empty.webp" width="430" height="577" alt="Flores, apicultores con panales, tarros de miel y un ave: la ilustración de Néctara.">
             <img class="art-full" id="opening-full" src="./assets/art-complete.webp" width="430" height="577" alt="">
@@ -110,7 +111,6 @@
           <canvas id="jar-canvas" width="420" height="720" aria-hidden="true"></canvas>
         </div>
         <div class="bee sprite" id="guide" aria-hidden="true"><div class="bee-wings"></div></div>
-        <div id="ambient" aria-hidden="true"></div>
         <div id="butterflies" aria-hidden="true"></div>
       </div>
       <div class="progress-track" aria-hidden="true"><span id="progress-thumb"></span></div>
