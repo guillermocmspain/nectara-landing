@@ -59,3 +59,5 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 @media(max-width:760px){.history-products{left:42px;top:420px;gap:22px}.history-products figure{width:142px}.history-jar{width:142px;height:245px}.history-products figcaption{font-size:15px;margin-top:13px}}
 
 @media(max-width:760px){.history-products{left:52px;gap:24px}.history-products figure{width:131px}.history-jar{width:131px;height:225px}.history-products figcaption{margin-top:10px;font-size:14px}}
+
+@media(min-width:761px){.narrative.origin-copy,.narrative.collection-copy{top:50%;transform:translateY(-50%)}.history-products{top:50%;transform:translateY(-50%)}}

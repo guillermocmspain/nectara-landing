@@ -148,7 +148,7 @@ function renderScene(u,t){
  }
  // Zoom about the exact marked location; the green point becomes the next backdrop.
  const map=$('#map-journey'),z=ease((s-.30)/.085),mz=Math.exp(z*Math.log(mobile?45:65));
- const mx=mobile?170:900,my=mobile?570:370;
+ const mx=mobile?170:900,my=mobile?570:H/2-(519/2-203)*520/628;
  const cx=mx,cy=my+Math.max(0,1-p)*H;
  const mw=mobile?240:520,mh=mw*519/628;
  style(map,'width',`${W}px`);style(map,'height',`${H}px`);

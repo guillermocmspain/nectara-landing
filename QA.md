@@ -91,3 +91,7 @@ Pareja frontal de miel cremada y miel cruda con sus nombres, tonos y precintos d
 ## Giro automático de la pareja
 
 Ambos tarros usan render WebGL independiente para un giro completo cada 32 segundos, en sentidos opuestos. Solo se actualizan mientras la sección está visible y se detienen con movimiento reducido o pestaña oculta. Prueba sin scroll: ángulo de 4,88° a 50,29° con scrollY constante (8514); p95 17 ms, ningún fotograma >50 ms y sin errores JavaScript. Movimiento reducido devuelve ambas vistas al frontal.
+
+## Alineación de las filas
+
+Origen e Historia centrados verticalmente en escritorio. Texto y pareja de tarros comparten centro; anclaje del mapa ajustado al mismo centro visual sin alterar su zoom. Revisión visual a 1440×900. Vistas móviles de 390 y 360 px mantienen disposición en columna y contenido dentro de pantalla, sin errores JavaScript.
