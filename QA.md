@@ -83,3 +83,7 @@ Recorrido controlado por fotograma con curva de aceleración y frenada suaves y 
 ## Acceso directo a miel cremada
 
 Nuestra miel usa un fundido verde de 1,52 s, sin recorrer visualmente las secciones. Cambio de posición únicamente con la capa al 100 % de opacidad; destino 0,44 con escena 2 y tarro frontal a 0 grados. Verificado por fotogramas: un único salto bajo cobertura opaca, capa retirada al terminar y sin errores JavaScript.
+
+## Ambos productos en Historia
+
+Pareja frontal de miel cremada y miel cruda con sus nombres, tonos y precintos diferenciados. Vistas generadas una vez con el mismo render del producto, sin nuevas descargas de imágenes ni WebGL adicional. El tarro individual deja paso a la pareja en Historia. Revisadas vistas 1440, 390 y 360 px: sin errores JavaScript, ambos renders presentes y sin superponer texto y tarros. Ajustada la altura móvil para dejar libre el control de movimiento.

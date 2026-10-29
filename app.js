@@ -100,8 +100,9 @@ function renderScene(u,t){
  }
  opacity($('.product:not(.raw-product) .product-copy'),1-ease(cross/.45));
  opacity($('.raw-product .product-copy'),ease((cross-.55)/.45));
- const jarVisible=ease((s-.415)/.025)*(jp<3.95?1:0)*(mobile?1-ease((p-3.3)/.5):1);
+ const jarVisible=ease((s-.415)/.025)*(jp<3.95?1:0)*(1-ease((p-3.25)/.45));
  opacity(jar,jarVisible);
+ opacity($('.history-products'),ease((p-3.65)/.3));
  place(jar,jx,jy,jh,reduced?0:Math.sin(p*1.4)*2.5,520);
  const raw=cross;
  let degrees=s<.56?360*ease((s-.44)/.115):s<.62?360:360+360*ease((s-.625)/.11);
@@ -248,7 +249,14 @@ async function initJar(){
   const dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(360*dpr);canvas.height=Math.round(620*dpr);gl.viewport(0,0,canvas.width,canvas.height);
   return {draw(deg,r=0){gl.uniform1f(raw,r);gl.uniform1f(angle,deg*Math.PI/180);gl.drawArrays(gl.TRIANGLES,0,6)}};
  }
- glJar=setup();if(glJar){glJar.draw(0);jar.classList.add('ready');state.webgl=true}
+ glJar=setup();if(glJar){
+  for(const [id,rawValue] of [['history-cream',0],['history-raw',1]]){
+   const preview=$('#'+id);glJar.draw(0,rawValue);
+   preview.getContext('2d').drawImage(canvas,0,0,preview.width,preview.height);
+   preview.parentElement.classList.add('has-preview');
+  }
+  glJar.draw(0);lastJarAngle=NaN;jar.classList.add('ready');state.webgl=true;
+ }
  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();glJar=null;jar.classList.remove('ready');state.webgl=false});
  canvas.addEventListener('webglcontextrestored',()=>{try{glJar=setup();lastJarAngle=NaN;jar.classList.add('ready');state.webgl=!!glJar;requestTick()}catch{jar.classList.remove('ready')}});
 }
