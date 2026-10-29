@@ -13,8 +13,8 @@
   <link rel="preload" as="image" href="./assets/botanical.webp" fetchpriority="high">
   <link rel="preload" as="image" href="./assets/botanical-complete.webp">
   <link rel="preload" as="image" href="./assets/art-complete.webp" fetchpriority="high">
-  <link rel="stylesheet" href="./styles.css?v=22">
-  <script type="module" src="./app.js?v=22"></script>
+  <link rel="stylesheet" href="./styles.css?v=23">
+  <script type="module" src="./app.js?v=23"></script>
 </head>
 <body>
   <div id="preloader" role="status" aria-label="Preparando Néctara">
@@ -24,14 +24,16 @@
   <a class="skip-link" href="#origen" data-go="origen">Ir al contenido</a>
   <header class="site-header">
     <a class="wordmark" href="#inicio" data-go="inicio" aria-label="Néctara, inicio">NÉCTARA</a>
+    <div class="header-actions">
     <nav class="desktop-nav" aria-label="Navegación principal">
       <a href="#origen" data-go="origen">El origen</a>
       <a href="#miel" data-go="miel">Nuestra miel</a>
       <a href="#coleccion" data-go="coleccion">Historia</a>
       <a href="#cierre" data-go="cierre">Contacto</a>
-      <a class="header-cta" href="#miel" data-go="miel">Descubrir <span aria-hidden="true">↗</span></a>
     </nav>
     <button class="mobile-menu-toggle" id="mobile-menu-open" type="button" aria-label="Abrir menú" aria-haspopup="dialog" aria-expanded="false" aria-controls="mobile-menu"><span>Menú</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg></button>
+    <button type="button" id="cart-open" aria-haspopup="dialog" aria-controls="cart-dialog" aria-label="Abrir bolsa de compra, 0 productos"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 10h18l2 18H5L7 10Z"/><path d="M11 11V8a5 5 0 0 1 10 0v3"/></svg><span id="cart-count" aria-hidden="true">0</span></button>
+    </div>
   </header>
   <dialog id="mobile-menu" aria-labelledby="mobile-menu-title">
     <div class="mobile-menu-head"><span id="mobile-menu-title" class="wordmark">NÉCTARA</span><button id="mobile-menu-close" type="button" aria-label="Cerrar menú"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
@@ -120,9 +122,7 @@
     <span>NÉCTARA <span class="footer-separator">·</span> Segovia</span>
     <a href="#inicio" data-go="inicio">Volver al inicio ↑</a>
   </footer>
-  <button class="motion-toggle" id="motion-toggle" type="button" aria-pressed="false">Reducir movimiento</button>
 
-  <button type="button" id="cart-open" aria-haspopup="dialog">Carrito <span id="cart-count">0</span></button>
   <dialog id="cart-dialog" aria-labelledby="cart-title">
     <div class="dialog-head"><h2 id="cart-title">Tu carrito</h2><button type="button" id="cart-close" class="close-dialog" aria-label="Cerrar el carrito">×</button></div>
     <div id="cart-items"></div>

@@ -113,3 +113,8 @@ Referencia leída en el tema local Poppr: panel completo, cierre circular y nave
 - Added Historia and Contacto to desktop navigation; matching mobile labels.
 - All menu destinations use the existing 1.52s opaque-veil transition, colored to match the destination. Scene changes occur only at full opacity; reduced motion jumps directly.
 - Edge checks at desktop/mobile confirmed Contacto → Origen, Historia and Nuestra miel never render intermediate scroll positions uncovered. No page errors; tablet header fits at 780px.
+
+## v23 — Upright products and header bag
+- Removed lateral product tilt while retaining cylindrical label rotation and product crossing.
+- Replaced floating cart with a header shopping bag and live quantity badge; removed Discover and floating motion control. System reduced-motion preference remains supported.
+- Edge checked at 1440x900, 390x844 and 360x640: upright WebGL jar, header fits, add-to-cart updates badge and bag reopens dialog; no page errors.

@@ -84,3 +84,11 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 
 .preloader-brand{display:block;width:100%;height:auto;margin:0 auto 20px;object-fit:contain}
 @media(max-height:500px){.preloader-brand{width:75%;margin-bottom:8px}.loader-flight{height:100px}}
+
+.header-actions{display:flex;align-items:center;gap:32px}
+#cart-open{position:relative;inset:auto;display:grid;place-items:center;flex-shrink:0;width:46px;height:46px;padding:8px;border:0;border-radius:50%;background:transparent;color:var(--ink)}
+#cart-open:hover{background:#9b855018}
+#cart-open svg{width:29px;height:29px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+#cart-count{position:absolute;right:-3px;top:-2px;display:grid;place-items:center;min-width:20px;height:20px;margin:0;padding:0 4px;border-radius:12px;background:var(--green);color:var(--cream);font:11px/1 Arial,sans-serif;border:2px solid var(--mint)}
+@media(max-width:1100px){.header-actions{gap:20px}}
+@media(max-width:760px){.header-actions{gap:12px}#cart-open{width:40px;height:44px}.site-header{padding-inline:18px;gap:12px}}

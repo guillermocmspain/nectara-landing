@@ -8,7 +8,6 @@ const guide=$('#guide'),jar=$('#jar'), openingFull=$('#opening-full'),closingFul
 const sceneEls=[...document.querySelectorAll('.scene')], backdropEls=[...document.querySelectorAll('.backdrop')];
 const media=matchMedia('(prefers-reduced-motion: reduce)');
 let reduced=media.matches;
-try{const saved=localStorage.getItem('nectara-motion');if(saved!==null)reduced=saved==='reduced'}catch{}
 let mobile=false,W=1280,H=728,scale=1,range=1,current=0,target=0,raf=0,lastTime=0,clock=0,ready=false,needsMeasure=true;
 let menuTravel=null;
 let historyTime=0;const historyRenderers=[];
@@ -104,7 +103,7 @@ function renderScene(u,t){
  const jarVisible=ease((s-.415)/.025)*(jp<3.95?1:0)*(1-ease((p-3.25)/.45));
  opacity(jar,jarVisible);
  opacity($('.history-products'),ease((p-3.65)/.3));
- place(jar,jx,jy,jh,reduced?0:Math.sin(p*1.4)*2.5,520);
+ place(jar,jx,jy,jh,0,520);
  const raw=cross;
  let degrees=s<.56?360*ease((s-.44)/.115):s<.62?360:360+360*ease((s-.625)/.11);
  if(reduced)degrees=0;
@@ -218,12 +217,10 @@ addEventListener('popstate',()=>navigate(location.hash.slice(1),false));
 function setMotion(value,persist=false){
  if(value)stopMenuTravel();
  reduced=value;document.body.classList.toggle('reduced-motion',value);
- $('#motion-toggle').setAttribute('aria-pressed',String(value));$('#motion-toggle').textContent=value?'Activar movimiento':'Reducir movimiento';
  state.reducedMotion=value;
  if(persist){try{localStorage.setItem('nectara-motion',value?'reduced':'full')}catch{}}
  lastJarAngle=NaN;requestTick();
 }
-$('#motion-toggle').addEventListener('click',()=>setMotion(!reduced,true));
 media.addEventListener('change',e=>setMotion(e.matches));
 setMotion(reduced);
 const dialog=$('#label-dialog');
@@ -235,7 +232,9 @@ const cartCatalog={cream:{name:'Miel cremada',price:'7,45 € – 10,45 €'},ra
 let cart={cream:0,raw:0};
 try{const saved=JSON.parse(localStorage.getItem('nectara-cart')||'{}');for(const key of Object.keys(cart))if(Number.isInteger(saved[key]))cart[key]=clamp(saved[key],0,99)}catch{}
 function renderCart(){
- $('#cart-count').textContent=cart.cream+cart.raw;
+ const count=cart.cream+cart.raw;
+ $('#cart-count').textContent=count;
+ $('#cart-open').setAttribute('aria-label',`Abrir bolsa de compra, ${count} ${count===1?'producto':'productos'}`);
  $('#cart-items').replaceChildren();
  for(const [key,product] of Object.entries(cartCatalog)){
   if(!cart[key])continue;
