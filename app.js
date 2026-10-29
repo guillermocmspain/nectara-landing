@@ -21,8 +21,8 @@ const butterflies=Array.from({length:6},(_,i)=>{const e=document.createElement('
 
 // Extra native-scroll reading time, with the visual story held at each article.
 const readingHolds=[{at:.275,start:.18425,end:.33425,selector:'.origin-copy'},{at:.86,start:.7262,end:.9062,selector:'.collection-copy'}];
-function storyTime(u){if(u<.18425)return u/.67;if(u<.33425)return .275;if(u<.7262)return (u-.15)/.67;if(u<.9062)return .86;return (u-.33)/.67}
-function physicalTime(s){return s*.67+(s>.275?.15:0)+(s>.86?.18:0)}
+function storyTime(u){if(!mobile)return u;if(u<.18425)return u/.67;if(u<.33425)return .275;if(u<.7262)return (u-.15)/.67;if(u<.9062)return .86;return (u-.33)/.67}
+function physicalTime(s){if(!mobile)return s;return s*.67+(s>.275?.15:0)+(s>.86?.18:0)}
 let readingExtents=[0,0];
 function sceneProgress(s){
  if(s<.08)return .12*ease(s/.08);
@@ -57,14 +57,14 @@ function measure(){
  scale=Math.min(rect.width/W,rect.height/H);
  world.style.setProperty('--scale',scale.toFixed(6));
  range=Math.max(1,story.offsetHeight-rect.height-parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')));
- if(restoreProgress!==null){target=restoreProgress;current=target;restoreProgress=null;window.scrollTo({top:target*range,behavior:'instant'})}else target=clamp(scrollY/range);
+ if(restoreProgress!==null){target=physicalTime(restoreProgress);current=target;restoreProgress=null;window.scrollTo({top:target*range,behavior:'instant'})}else target=clamp(scrollY/range);
  if(!ready)current=target;
  readingExtents=readingHolds.map(h=>{const e=$(h.selector);return Math.max(0,e.querySelector('.reading-text').scrollHeight-e.querySelector('.reading-window').clientHeight)});
  needsMeasure=false;
 }
 function renderScene(u,t){
  const s=clamp(storyTime(u));
- readingHolds.forEach((h,i)=>{const q=clamp((u-h.start)/(h.end-h.start));style($(h.selector+' .reading-text'),'transform',`translate3d(0,${-q*readingExtents[i]}px,0)`);opacity($(h.selector+' .reading-cue'),1-ease((q-.9)/.1))});
+ readingHolds.forEach((h,i)=>{const q=mobile?clamp((u-h.start)/(h.end-h.start)):0;style($(h.selector+' .reading-text'),'transform',`translate3d(0,${-q*readingExtents[i]}px,0)`);opacity($(h.selector+' .reading-cue'),1-ease((q-.9)/.1))});
  const originEnd=clamp((u-.33425)/.016);
  opacity($('.origin-copy'),mobile?1-ease(originEnd):1-ease((s-.30)/.045));
 
@@ -196,7 +196,7 @@ const links={inicio:0,origen:.275,miel:.49,cruda:.68,coleccion:.86,cierre:1};
 function navigate(key,smooth=true){if(!(key in links))return;measure();const y=physicalTime(links[key])*range;window.scrollTo({top:y,behavior:smooth&&!reduced?'smooth':'instant'});target=physicalTime(links[key]);requestTick()}
 document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const key=a.dataset.go;history.replaceState(null,'',`#${key}`);navigate(key)}));
 addEventListener('scroll',()=>{target=clamp(scrollY/range);requestTick()},{passive:true});
-addEventListener('resize',()=>{if(ready)restoreProgress=current;needsMeasure=true;requestTick()},{passive:true});
+addEventListener('resize',()=>{if(ready)restoreProgress=storyTime(current);needsMeasure=true;requestTick()},{passive:true});
 new ResizeObserver(()=>{needsMeasure=true;requestTick()}).observe(stage);
 document.addEventListener('visibilitychange',()=>{hidden=document.hidden;lastTime=0;if(hidden&&raf){cancelAnimationFrame(raf);raf=0}else requestTick()});
 addEventListener('popstate',()=>navigate(location.hash.slice(1),false));

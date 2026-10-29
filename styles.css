@@ -32,3 +32,6 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 @media(max-width:760px){.raw-product .product-copy{left:26px;width:340px}}
 
 #map-wash{position:absolute;inset:0;background:var(--green);opacity:0;visibility:hidden;pointer-events:none;z-index:0;will-change:opacity}.world{z-index:1}
+
+@media(min-width:761px){#story{height:1200svh}.narrative.origin-copy,.narrative.collection-copy{top:58px;width:650px}.narrative h1,.narrative h2{font-size:34px;max-width:650px}.narrative .eyebrow{margin-bottom:15px}.reading-window{height:auto;margin-top:22px;overflow:visible;mask-image:none}.reading-text{padding:0;will-change:auto;transform:none!important}.reading-text p{font-size:15px;line-height:1.5;margin-bottom:14px}.reading-cue{display:none}}
+@media(max-width:760px){.narrative h1,.narrative h2{font-size:29px}.reading-text p{font-size:15px;line-height:1.5;margin-bottom:16px}}

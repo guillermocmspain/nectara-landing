@@ -51,3 +51,7 @@ El tarro se desplaza de izquierda a derecha en una curva suave mientras el mismo
 ## Disolución del mapa durante el zoom
 
 El mapa claro se desvanece antes de alcanzar los bordes de su viewport. Una capa a todo el ancho funde el fondo de origen con el verde de producto, manteniendo el círculo expansivo. Revisados puntos intermedios y recorrido inverso a 1920 y 390 px, sin franjas laterales, desbordamientos ni errores JavaScript.
+
+## Tipografía y avance de secciones
+
+En escritorio: títulos de 34 px y texto de 15 px, sin máscara, desplazamiento interno ni tramos de lectura adicionales. Comprobados los textos completos a 1440 × 900: el final de origen queda a 638 px y el de historia a 856 px. En móvil se reduce la tipografía conservando el recorrido de lectura para mantener todo el contenido legible.
