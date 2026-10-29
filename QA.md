@@ -103,3 +103,8 @@ Sustituido el botón de etiqueta por Añadir al carrito y añadido su equivalent
 ## Menú móvil inspirado en Poppr y portada
 
 Referencia leída en el tema local Poppr: panel completo, cierre circular y navegación amplia; adaptación con paleta y fuentes de Néctara. Menú nativo dialog con foco contenido, cierre Escape, aria-expanded, enlaces de sección, correo y acceso al carrito. Verificado a 390×844 y 360×640 sin scroll del menú; enlace a miel mantiene el fundido verde y el carrito abre correctamente. Portada elevada 35 px lógicos en escritorio y 18 px en móvil, con trayectorias de insectos ajustadas. Flecha SVG ampliada a 64/62 px con movimiento suave que se desactiva al reducir movimiento. Sin errores JavaScript.
+
+## v20 — Botanical edges
+- Hero and closing use botanical-complete.webp; both panels remain inside the viewport at their original proportions. Mobile places the complete composition at the bottom.
+- Checked opening/closing at 1920x950 and 390x844 in Edge; no page errors.
+- Asset edited using built-in image_gen. Prompt: preserve the vintage botanical style, sunflowers, lilies, lavender, clover, honey jar, partridge and black/gold urn; complete cropped flowers and foliage; leave mint margin on all edges and a broad empty center; no text or new objects. Output assets/botanical-complete.webp, converted to WebP for delivery.
