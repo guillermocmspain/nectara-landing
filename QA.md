@@ -55,3 +55,7 @@ El mapa claro se desvanece antes de alcanzar los bordes de su viewport. Una capa
 ## Tipografía y avance de secciones
 
 En escritorio: títulos de 34 px y texto de 15 px, sin máscara, desplazamiento interno ni tramos de lectura adicionales. Comprobados los textos completos a 1440 × 900: el final de origen queda a 638 px y el de historia a 856 px. En móvil se reduce la tipografía conservando el recorrido de lectura para mantener todo el contenido legible.
+
+## Vuelos entre secciones
+
+Salidas y entradas por los laterales para abeja guía, tres abejas pequeñas y seis mariposas. Posiciones de producto con variación por visita y trayectorias reversibles ligadas al scroll. Regreso final desde fuera de pantalla hasta las posiciones originales. Comprobado a 1920 y 390 px: todos los insectos fuera del viewport durante origen e historia, opacidad 1 durante los vuelos, sin errores JavaScript. La mezcla final con la ilustración se conserva únicamente al posarse.

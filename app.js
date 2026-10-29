@@ -24,6 +24,28 @@ const readingHolds=[{at:.275,start:.18425,end:.33425,selector:'.origin-copy'},{a
 function storyTime(u){if(!mobile)return u;if(u<.18425)return u/.67;if(u<.33425)return .275;if(u<.7262)return (u-.15)/.67;if(u<.9062)return .86;return (u-.33)/.67}
 function physicalTime(s){if(!mobile)return s;return s*.67+(s>.275?.15:0)+(s>.86?.18:0)}
 let readingExtents=[0,0];
+// Stable per-visit variation: never choose new positions in an animation frame.
+const flightOffsets=Array.from({length:10},()=>[Math.random()*24-12,Math.random()*20-10]);
+function flightRoute(id,home,s,t){
+ const margin=Math.max(0,(stage.clientWidth/scale-W)/2)+180;
+ const side=id%2?W+margin:-margin;
+ const edge={x:side,y:H*(.2+(id%4)*.18)};
+ const cream=mobile?[[305,300],[35,350],[350,680],[55,690],[65,320],[355,360],[25,580],[350,590],[100,705],[290,705]]:[[570,130],[80,110],[1200,650],[680,620],[620,280],[1130,90],[70,600],[550,660],[1210,370],[420,80]];
+ const raw=mobile?[[85,320],[355,350],[45,670],[340,695],[325,300],[35,400],[365,540],[55,570],[285,710],[110,700]]:[[590,110],[1200,120],[80,640],[690,660],[680,280],[80,90],[1210,590],[530,640],[70,350],[1040,80]];
+ function position(arr){return {x:arr[id][0]+flightOffsets[id][0]+Math.sin(t*.8+id)*7,y:arr[id][1]+flightOffsets[id][1]+Math.sin(t*1.1+id*2)*9}}
+ const a=position(cream),b=position(raw);
+ function travel(a,b,q){return {x:mix(a.x,b.x,q),y:mix(a.y,b.y,q)+Math.sin(q*Math.PI)*(id%2?24:-30)}}
+ const delay=(id%4)*.002;
+ if(s<.18)return home;
+ if(s<.245)return travel(home,edge,ease((s-.18-delay)/(.065-delay)));
+ if(s<.44)return edge;
+ if(s<.49)return travel(edge,a,ease((s-.44-delay)/(.05-delay)));
+ if(s<.56)return a;
+ if(s<.63)return travel(a,b,ease((s-.56-delay)/(.07-delay)));
+ if(s<.755)return b;
+ if(s<.82)return travel(b,edge,ease((s-.755-delay)/(.065-delay)));
+ return edge;
+}
 function sceneProgress(s){
  if(s<.08)return .12*ease(s/.08);
  if(s<.24)return .12+.88*ease((s-.08)/.16);
@@ -106,58 +128,33 @@ function renderScene(u,t){
  state.raw=raw;
  state.jarDegrees=degrees;
 
- let flight=guidePath(Math.min(jp,3));
- const beforeClose=guidePath(3);
+ const home=guidePath(Math.min(jp,3));
+ let flight=flightRoute(0,home,s,t),guideSize=home.size,guideAngle=home.angle;
  if(s>.88){
-  const dest=[g.x+224*g.scale,g.y+264*g.scale];
-  flight={x:cubic(beforeClose.x,mobile?350:454,mobile?240:807,dest[0],returning),y:cubic(beforeClose.y,mobile?150:134,mobile?370:357,dest[1],returning),size:mix(beforeClose.size,mobile?165:193,returning),angle:-3*(1-returning)+5*Math.sin(returning*Math.PI)};
- }
- const drift=take*(1-returning);
- flight.x+=Math.sin(t*.95)*1.2*drift;flight.y+=Math.sin(t*1.2)*1.8*drift;
- place(guide,flight.x,flight.y,flight.size,flight.angle);
- const clean=(1-ease((s-.22)/.025)+ease((s-.44)/.025))*(1-ease((p-3.5)/.3)+ease((p-4.2)/.3));
- opacity(guide,reduced?0:take*(1-land)*clean);
-
- // Small bees have the same solid rendering as the guide, never ghosted.
+  const edge=flightRoute(0,home,.88,t),q=returning;
+  flight={x:cubic(edge.x,edge.x+150,g.x+120*g.scale,g.x+224*g.scale,q),y:cubic(edge.y,edge.y-50,g.y+330*g.scale,g.y+264*g.scale,q)};
+  guideSize=mix(mobile?78:102,mobile?165:193,q);guideAngle=-5*Math.sin(q*Math.PI);
+ }else if(s>=.245){guideSize=mobile?78:102;guideAngle=Math.sin(t*.7)*3;}
+ place(guide,flight.x,flight.y,guideSize,guideAngle);
+ opacity(guide,reduced?0:take*(1-land));
+ const clean=(s>=.245&&s<=.44)||(s>=.82&&s<=.88)?0:1;
  const ambientSizes=mobile?[26,30,22]:[37,45,28];
  for(let j=0;j<3;j++){
   const speed=[22,-17,13][j]*(mobile?.5:1);
-  let x=((180+j*(W*.32)+t*speed)%(W+180)+W+180)%(W+180)-90;
-  let y=H*[.28,.81,.60][j]+Math.sin(t*.7+j*2)*(mobile?16:24);
-  const dest=mobile?[[34,330],[356,340],[349,590]][j]:[[192,294],[1103,302],[1108,564]][j];
-  x=mix(x,dest[0],returning);y=mix(y,dest[1],returning);
-  place(ambients[j],x,y,mix(ambientSizes[j],mobile?19:25,returning),0);
-  ambients[j].firstChild.style.transform=speed<0?'scaleX(-1)':'';
-  opacity(ambients[j],reduced?0:clean);
+  const initial={x:((180+j*(W*.32)+t*speed)%(W+360)+W+360)%(W+360)-180,y:H*[.28,.81,.60][j]+Math.sin(t*.7+j*2)*18};
+  let pos=flightRoute(j+1,initial,s,t);
+  if(s>.88){const dest=mobile?[[34,330],[356,340],[349,590]][j]:[[192,294],[1103,302],[1108,564]][j];pos={x:mix(pos.x,dest[0],returning),y:mix(pos.y,dest[1],returning)+Math.sin(returning*Math.PI)*35};}
+  place(ambients[j],pos.x,pos.y,mix(ambientSizes[j],mobile?19:25,returning),Math.sin(t+j)*3);
+  opacity(ambients[j],reduced?0:1);
  }
-
  const slots=[[112,87,44],[62,121,36],[98,151,27],[347,48,39],[33,230,29],[42,281,27]];
  for(let j=0;j<6;j++){
-  const [lx,ly,bsize]=slots[j],slot=[g.x+lx*g.scale,g.y+ly*g.scale];
-  let x=slot[0],y=slot[1],size=bsize*g.scale,alpha=take,angle=0;
-  if(s<.88){
-   if(j<2){
-    const q=ease((s-.012-j*.002)/.16),ox=(j===0?-86:95)*(mobile?.65:1),oy=(j===0?-69:64)*(mobile?.65:1);
-    const wx=21*Math.sin(t*1.61+j*1.9)+10*Math.sin(t*.71+j*2.7),wy=18*Math.sin(t*1.19+j*2.5)+8*Math.sin(t*2.21+j);
-    x=mix(slot[0],flight.x+ox+wx*(mobile?.55:1),q);y=mix(slot[1],flight.y+oy+wy*(mobile?.55:1),q);
-    size=mix(size,(j===0?43:34)*(mobile?.70:1),q);angle=Math.sin(t*1.3+j)*18;
-   }else{
-    const q=ease((s-.016-(j-2)*.004)/.15),direction=j%2?-1:1;
-    x+=direction*(q*W*.5+Math.sin(q*Math.PI*2+j)*q*38);y+=Math.sin(q*Math.PI)*(75+12*j)-q*90-p*H*.15;
-    size*=1+.45*q;alpha*=1-ease((q-.79)/.21);angle=direction*q*24;
-   }
-  }else{
-   const q=ease((s-.891-j*.0025)/(.083-j*.001));
-   let begin;
-   if(j<2){begin=[beforeClose.x+(j===0?-86:95)*(mobile?.65:1),beforeClose.y+(j===0?-69:64)*(mobile?.65:1)]}
-   else{begin=[j%2?W+45:-45,H*(j<4?.35:.73)]}
-   const bend=j%2?1:-1;
-   x=cubic(begin[0],begin[0]+bend*(mobile?65:130),slot[0]+bend*(mobile?60:135),slot[0],q);
-   y=cubic(begin[1],begin[1]+90,slot[1]+100,slot[1],q);
-   x+=Math.sin(t*1.7+j)*12*Math.sin(q*Math.PI);y+=Math.sin(t*1.3+j*2)*9*Math.sin(q*Math.PI);
-   alpha=1-land;angle=Math.sin(t+j)*12*(1-q);
-  }
-  place(butterflies[j],x,y,size,angle,40);opacity(butterflies[j],reduced?0:alpha*clean);
+  const [lx,ly,bsize]=slots[j],slot={x:g.x+lx*g.scale,y:g.y+ly*g.scale};
+  const q=ease((s-.012-j*.002)/.15);
+  const initial={x:mix(slot.x,home.x+(j%2?90:-90)*(mobile?.6:1)+Math.sin(t*1.4+j)*22,q),y:mix(slot.y,home.y+(j%2?75:-70)*(mobile?.6:1)+Math.sin(t+j)*18,q)};
+  let pos=flightRoute(j+4,initial,s,t),size=mix(bsize*g.scale,(j<2?38:29)*(mobile?.75:1),q),angle=Math.sin(t*1.3+j)*14;
+  if(s>.88){const r=ease((s-.891-j*.0025)/(.083-j*.001)),edge=flightRoute(j+4,initial,.88,t);pos={x:cubic(edge.x,edge.x+(j%2?-80:80),slot.x+(j%2?60:-60),slot.x,r),y:cubic(edge.y,edge.y+70,slot.y+65,slot.y,r)};size=mix(size,bsize*g.scale,r);angle*=1-r;}
+  place(butterflies[j],pos.x,pos.y,size,angle,40);opacity(butterflies[j],reduced?0:(s>.88?1-land:take));
  }
  // Zoom about the exact marked location; the green point becomes the next backdrop.
  const map=$('#map-journey'),z=ease((s-.30)/.085),mz=Math.exp(z*Math.log(mobile?45:65));
