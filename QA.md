@@ -39,3 +39,7 @@ Los recursos gráficos ocupan aproximadamente 2 MB. No se incluyen bibliotecas d
 ## Mapa vectorial
 
 Mapa raster sustituido por trazados SVG de Natural Earth, sin fondo rectangular y con paleta botánica. Zoom mediante transformación interna SVG en viewport fijo; punto conservado. Revisión visual de mapa y zoom a 1440 y 390 px. Navegación, diálogo y movimiento reducido correctos; sin errores ni recursos fallidos. Sin desbordamientos a 360/390 px. Recorrido: p95 16,8 ms, máximo 17 ms, cero muestras superiores a 50 ms (Edge headless).
+
+## Textos de origen e historia
+
+Incorporados íntegramente los cuatro párrafos de origen y los cinco de historia facilitados por el usuario. Tramos de lectura vinculados al scroll nativo con títulos fijos y recorrido suficiente hasta el último párrafo. Revisión visual del principio y final de ambos textos a 1440, 390 y 360 px, sin desbordamiento horizontal ni errores JavaScript. En móvil el mapa aparece al terminar la lectura y el tarro deja espacio a la historia.

@@ -19,6 +19,11 @@ function place(el,x,y,size,angle=0,base=193){style(el,'transform',`translate3d($
 const ambients=Array.from({length:3},(_,i)=>{const e=document.createElement('div');e.className='bee sprite ambient-bee';e.innerHTML='<div class="bee-wings"></div>';e.firstChild.style.animationDelay=`-${i*.07}s`;$('#ambient').append(e);return e});
 const butterflies=Array.from({length:6},(_,i)=>{const e=document.createElement('div');e.className='butterfly sprite';e.innerHTML='<img src="./assets/butterfly.webp" alt="" width="220" height="200">';e.firstChild.style.animationDelay=`-${i*.13}s`;e.firstChild.style.animationDuration=`${.44+i*.037}s`;$('#butterflies').append(e);return e});
 
+// Extra native-scroll reading time, with the visual story held at each article.
+const readingHolds=[{at:.275,start:.18425,end:.33425,selector:'.origin-copy'},{at:.86,start:.7262,end:.9062,selector:'.collection-copy'}];
+function storyTime(u){if(u<.18425)return u/.67;if(u<.33425)return .275;if(u<.7262)return (u-.15)/.67;if(u<.9062)return .86;return (u-.33)/.67}
+function physicalTime(s){return s*.67+(s>.275?.15:0)+(s>.86?.18:0)}
+let readingExtents=[0,0];
 function sceneProgress(s){
  if(s<.08)return .12*ease(s/.08);
  if(s<.24)return .12+.88*ease((s-.08)/.16);
@@ -54,9 +59,15 @@ function measure(){
  range=Math.max(1,story.offsetHeight-rect.height-parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header')));
  if(restoreProgress!==null){target=restoreProgress;current=target;restoreProgress=null;window.scrollTo({top:target*range,behavior:'instant'})}else target=clamp(scrollY/range);
  if(!ready)current=target;
+ readingExtents=readingHolds.map(h=>{const e=$(h.selector);return Math.max(0,e.querySelector('.reading-text').scrollHeight-e.querySelector('.reading-window').clientHeight)});
  needsMeasure=false;
 }
-function renderScene(s,t){
+function renderScene(u,t){
+ const s=clamp(storyTime(u));
+ readingHolds.forEach((h,i)=>{const q=clamp((u-h.start)/(h.end-h.start));style($(h.selector+' .reading-text'),'transform',`translate3d(0,${-q*readingExtents[i]}px,0)`);opacity($(h.selector+' .reading-cue'),1-ease((q-.9)/.1))});
+ const originEnd=clamp((u-.33425)/.016);
+ opacity($('.origin-copy'),mobile?1-ease(originEnd):1);
+
  const p=sceneProgress(s),g=artGeometry(),take=ease((s-.005)/.035),land=ease((s-.978)/.014),returning=ease((s-.89)/.085);
  const finished=s>=.993;
  document.body.classList.toggle('is-finished',finished);
@@ -77,7 +88,7 @@ function renderScene(s,t){
  let jx,jy,jh;
  if(jp<=2){jx=mix(mobile?375:970,mobile?195:348,ease(jr));jy=mix(mobile?780:730,mobile?450:390,ease(jr));jh=mobile?350:520}
  else{jx=mix(mobile?195:348,mobile?195:935,ease(jc));jy=mix(mobile?450:390,mobile?520:398,ease(jc))-leave*H;jh=mix(mobile?350:520,mobile?330:520,ease(jc))}
- const jarVisible=ease((s-.415)/.025)*(jp<3.95?1:0);
+ const jarVisible=ease((s-.415)/.025)*(jp<3.95?1:0)*(mobile?1-ease((p-3.3)/.5):1);
  opacity(jar,jarVisible);
  place(jar,jx,jy,jh,reduced?0:Math.sin(p*1.4)*2.5,520);
  const raw=ease((s-.565)/.045);
@@ -97,7 +108,7 @@ function renderScene(s,t){
  const drift=take*(1-returning);
  flight.x+=Math.sin(t*.95)*1.2*drift;flight.y+=Math.sin(t*1.2)*1.8*drift;
  place(guide,flight.x,flight.y,flight.size,flight.angle);
- const clean=1-ease((s-.275)/.025)+ease((s-.44)/.025);
+ const clean=(1-ease((s-.22)/.025)+ease((s-.44)/.025))*(1-ease((p-3.5)/.3)+ease((p-4.2)/.3));
  opacity(guide,reduced?0:take*(1-land)*clean);
 
  // Small bees have the same solid rendering as the guide, never ghosted.
@@ -150,7 +161,7 @@ function renderScene(s,t){
  $('#map-vector').setAttribute('viewBox',`0 0 ${W} ${H}`);
  $('#map-drawing').setAttribute('transform',`translate(${cx} ${cy}) scale(${mw/628*mz}) translate(-251 -203)`);
  map.style.setProperty('--map-detail',(1-ease(z/.25)).toFixed(4));
- const mapAlpha=s<.40?ease((p-.65)/.3):1-ease((s-.40)/.015);
+ const mapAlpha=(s<.40?ease((p-.65)/.3):1-ease((s-.40)/.015))*(mobile?ease(originEnd):1);
  opacity(map,mapAlpha);
 
  const dot=$('#map-dot'),diameter=mw*.083*mz;
@@ -159,7 +170,7 @@ function renderScene(s,t){
  state.mapZoom=mz;state.cleanTransition=clean<.001;
  const track=document.querySelector('.progress-track');
  style($('#progress-thumb'),'transform',`translate3d(0,${(s*Math.max(0,track.clientHeight-44)).toFixed(3)}px,0)`);
- state.progress=s;state.scene=p;state.frames++;
+ state.progress=u;state.storyProgress=s;state.scene=p;state.frames++;
 }
 function tick(now){
  raf=0;if(hidden)return;
@@ -173,7 +184,7 @@ function tick(now){
 }
 function requestTick(){if(!raf&&!hidden)raf=requestAnimationFrame(tick)}
 const links={inicio:0,origen:.275,miel:.49,cruda:.68,coleccion:.86,cierre:1};
-function navigate(key,smooth=true){if(!(key in links))return;measure();const y=links[key]*range;window.scrollTo({top:y,behavior:smooth&&!reduced?'smooth':'instant'});target=links[key];requestTick()}
+function navigate(key,smooth=true){if(!(key in links))return;measure();const y=physicalTime(links[key])*range;window.scrollTo({top:y,behavior:smooth&&!reduced?'smooth':'instant'});target=physicalTime(links[key]);requestTick()}
 document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const key=a.dataset.go;history.replaceState(null,'',`#${key}`);navigate(key)}));
 addEventListener('scroll',()=>{target=clamp(scrollY/range);requestTick()},{passive:true});
 addEventListener('resize',()=>{if(ready)restoreProgress=current;needsMeasure=true;requestTick()},{passive:true});
@@ -232,4 +243,4 @@ Promise.allSettled([...core.map(path=>loadImage(path).finally(loadProgress)),ini
  if(location.hash.slice(1) in links)navigate(location.hash.slice(1),false);
 });
 // Read-only diagnostics make rendering and scroll verification reproducible.
-Object.defineProperty(window,'__nectara',{value:{get state(){return {...state,range,scale,mobile}},sceneProgress},writable:false});
+Object.defineProperty(window,'__nectara',{value:{get state(){return {...state,range,scale,mobile}},sceneProgress,physicalTime},writable:false});
