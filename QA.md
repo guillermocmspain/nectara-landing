@@ -43,3 +43,7 @@ Mapa raster sustituido por trazados SVG de Natural Earth, sin fondo rectangular 
 ## Textos de origen e historia
 
 Incorporados íntegramente los cuatro párrafos de origen y los cinco de historia facilitados por el usuario. Tramos de lectura vinculados al scroll nativo con títulos fijos y recorrido suficiente hasta el último párrafo. Revisión visual del principio y final de ambos textos a 1440, 390 y 360 px, sin desbordamiento horizontal ni errores JavaScript. En móvil el mapa aparece al terminar la lectura y el tarro deja espacio a la historia.
+
+## Cruce entre productos
+
+El tarro se desplaza de izquierda a derecha en una curva suave mientras el mismo progreso interpola el color y el precinto. Texto de miel cruda a la izquierda. Recorrido inverso verificado; en móvil el desplazamiento se limita al ancho disponible. Revisión a 1440 y 390 px en inicio, mitad y final; sin errores JavaScript y con el tarro dentro de pantalla.

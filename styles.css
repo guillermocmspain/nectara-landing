@@ -27,3 +27,6 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 
 #story{height:1700svh}.narrative.origin-copy,.narrative.collection-copy{left:70px;top:65px;width:610px}.narrative .eyebrow{margin-bottom:18px}.narrative h1,.narrative h2{font-size:43px;line-height:1.12;max-width:570px}.reading-window{height:455px;margin-top:24px;overflow:hidden;mask-image:linear-gradient(transparent,#000 12px,#000 calc(100% - 12px),transparent)}.reading-text{will-change:transform;padding:12px 0}.reading-text p{font-size:18px;line-height:1.65;margin:0 0 22px}.reading-cue{display:block;margin-top:12px;font-size:10px;letter-spacing:.08em;color:var(--gold)}
 @media(max-width:760px){.narrative.origin-copy,.narrative.collection-copy{left:28px;top:32px;width:334px}.narrative h1,.narrative h2{font-size:34px}.narrative .eyebrow{font-size:10px;margin-bottom:14px}.reading-window{height:470px;margin-top:20px}.reading-text p{font-size:17px;line-height:1.62;margin-bottom:22px}.reading-cue{font-size:9px}}
+
+.raw-product .product-copy{left:80px;width:480px}
+@media(max-width:760px){.raw-product .product-copy{left:26px;width:340px}}

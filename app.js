@@ -77,7 +77,7 @@ function renderScene(u,t){
   style(sceneEls[i],'visibility',visible?'visible':'hidden');
   const inactive=Math.abs(delta)>.64;
   if(sceneEls[i].getAttribute('aria-hidden')!==String(inactive)){sceneEls[i].setAttribute('aria-hidden',String(inactive));sceneEls[i].inert=inactive}
-  style(backdropEls[i],'transform',`translate3d(0,${(delta*100).toFixed(4)}%,0)`);
+  style(backdropEls[i],'transform',`translate3d(0,${(i===2&&p>=2&&p<=3?0:delta*100).toFixed(4)}%,0)`);
  }
  opacity(openingFull,reduced?1:1-take);
  opacity(closingFull,reduced?1:land);
@@ -88,10 +88,17 @@ function renderScene(u,t){
  let jx,jy,jh;
  if(jp<=2){jx=mix(mobile?375:970,mobile?195:348,ease(jr));jy=mix(mobile?780:730,mobile?450:390,ease(jr));jh=mobile?350:520}
  else{jx=mix(mobile?195:348,mobile?195:935,ease(jc));jy=mix(mobile?450:390,mobile?520:398,ease(jc))-leave*H;jh=mix(mobile?350:520,mobile?330:520,ease(jc))}
+ const cross=ease((s-.56)/.06);
+ if(p>=2){
+  if(mobile){jx=mix(195,240,cross);jy=450-18*Math.sin(cross*Math.PI)-leave*H;}
+  else{jx=mix(348,935,cross);jy=mix(390,398,cross)-36*Math.sin(cross*Math.PI)-leave*H;}
+ }
+ opacity($('.product:not(.raw-product) .product-copy'),1-ease(cross/.45));
+ opacity($('.raw-product .product-copy'),ease((cross-.55)/.45));
  const jarVisible=ease((s-.415)/.025)*(jp<3.95?1:0)*(mobile?1-ease((p-3.3)/.5):1);
  opacity(jar,jarVisible);
  place(jar,jx,jy,jh,reduced?0:Math.sin(p*1.4)*2.5,520);
- const raw=ease((s-.565)/.045);
+ const raw=cross;
  let degrees=s<.56?360*ease((s-.44)/.115):s<.62?360:360+360*ease((s-.625)/.11);
  if(reduced)degrees=0;
  if(glJar&&jarVisible>.001&&(!Number.isFinite(lastJarAngle)||Math.abs(degrees-lastJarAngle)>.008||raw!==lastRaw)){glJar.draw(degrees,raw);lastJarAngle=degrees;lastRaw=raw}
