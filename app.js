@@ -21,6 +21,12 @@ function place(el,x,y,size,angle=0,base=193){style(el,'transform',`translate3d($
 const ambients=Array.from({length:3},(_,i)=>{const e=document.createElement('div');e.className='bee sprite ambient-bee';e.innerHTML='<div class="bee-wings"></div>';e.firstChild.style.animationDelay=`-${i*.07}s`;$('#ambient').append(e);return e});
 const butterflies=Array.from({length:6},(_,i)=>{const e=document.createElement('div');e.className='butterfly sprite';e.innerHTML='<img src="./assets/butterfly.webp" alt="" width="220" height="200">';e.firstChild.style.animationDelay=`-${i*.13}s`;e.firstChild.style.animationDuration=`${.44+i*.037}s`;$('#butterflies').append(e);return e});
 
+const looseButterflies=Array.from({length:3},(_,i)=>{
+ const el=document.createElement('div');el.className='butterfly sprite loose-butterfly';el.setAttribute('aria-hidden','true');
+ el.innerHTML='<img src="./assets/butterfly.webp" alt="" width="220" height="200">';
+ el.firstChild.style.animationDuration=`${.7+i*.13}s`;el.firstChild.style.animationDelay=`-${i*.21}s`;
+ $('#butterflies').append(el);return el;
+});
 const wingElements=[...document.querySelectorAll('.bee-wings')];
 
 // The same direct scroll timeline on desktop and mobile.
@@ -148,6 +154,17 @@ function renderScene(u,t){
   place(ambients[j],pos.x,pos.y,mix(ambientSizes[j],mobile?19:25,returning),Math.sin(t+j)*3);
   opacity(ambients[j],reduced?0:1);
  }
+ // Additional opening butterflies stay away from the central label and leave via the sides.
+ looseButterflies.forEach((el,i)=>{
+  const side=i===1?1:-1;
+  const x=mobile?(side<0?24:W-24):(side<0?W*.22:W*.78);
+  const y=H*[.19,.25,.58][i];
+  const drift=mobile?8:30;
+  const home={x:x+Math.sin(t*.29+i*2)*drift+Math.sin(t*.53+i)*drift*.2,y:y+Math.sin(t*.37+i*1.7)*(mobile?13:24)};
+  const pos=flightRoute(i===1?11:10,home,s,t);
+  place(el,pos.x,pos.y,mobile?20+i*2:29+i*4,Math.sin(t*.41+i)*10,40);
+  opacity(el,!reduced&&s<.245&&(!mobile||i<2)?1:0);
+ });
  const slots=[[112,87,44],[62,121,36],[98,151,27],[347,48,39],[33,230,29],[42,281,27]];
  for(let j=0;j<6;j++){
   const [lx,ly,bsize]=slots[j],slot={x:g.x+lx*g.scale,y:g.y+ly*g.scale};
