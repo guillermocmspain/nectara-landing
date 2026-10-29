@@ -10,6 +10,7 @@ const media=matchMedia('(prefers-reduced-motion: reduce)');
 let reduced=media.matches;
 try{const saved=localStorage.getItem('nectara-motion');if(saved!==null)reduced=saved==='reduced'}catch{}
 let mobile=false,W=1280,H=728,scale=1,range=1,current=0,target=0,raf=0,lastTime=0,clock=0,ready=false,needsMeasure=true;
+let menuTravel=null;
 let lastRaw=NaN,glJar=null,lastJarAngle=NaN,hidden=document.hidden,restoreProgress=null;
 const state={ready:false,webgl:false,progress:0,scene:0,reducedMotion:reduced,frames:0};
 const cache=new WeakMap();
@@ -165,21 +166,41 @@ function tick(now){
  if(needsMeasure)measure();
  const dt=lastTime?Math.min((now-lastTime)/1000,.05):1/60;lastTime=now;
  if(!reduced)clock+=dt;
+ if(menuTravel){
+  menuTravel.elapsed+=dt;
+  const q=clamp(menuTravel.elapsed/menuTravel.duration),e=q*q*q*(q*(q*6-15)+10);
+  target=mix(menuTravel.from,menuTravel.to,e);
+  window.scrollTo({top:target*range,behavior:'instant'});
+  if(q===1)menuTravel=null;
+ }
+ state.navigating=!!menuTravel;
  const diff=target-current;
  current=Math.abs(diff)<.00002?target:mix(current,target,1-Math.exp(-dt/.065));
  renderScene(current,clock);
- if(Math.abs(target-current)>.00002||(!reduced&&current<.993))requestTick();
+ if(menuTravel||Math.abs(target-current)>.00002||(!reduced&&current<.993))requestTick();
 }
 function requestTick(){if(!raf&&!hidden)raf=requestAnimationFrame(tick)}
 const links={inicio:0,origen:.275,miel:.49,cruda:.68,coleccion:.86,cierre:1};
-function navigate(key,smooth=true){if(!(key in links))return;measure();const y=physicalTime(links[key])*range;window.scrollTo({top:y,behavior:smooth&&!reduced?'smooth':'instant'});target=physicalTime(links[key]);requestTick()}
+function stopMenuTravel(){if(!menuTravel)return;menuTravel=null;target=clamp(scrollY/range);requestTick()}
+function navigate(key,smooth=true){
+ if(!(key in links))return;
+ stopMenuTravel();measure();
+ const destination=physicalTime(links[key]),from=clamp(scrollY/range),distance=Math.abs(destination-from);
+ if(!smooth||reduced||distance<.0001){window.scrollTo({top:destination*range,behavior:'instant'});target=destination;requestTick();return}
+ // Ease both acceleration and braking; do not assign the final target ahead of the scroll.
+ menuTravel={from,to:destination,elapsed:0,duration:1.2+7*distance};
+ lastTime=performance.now();requestTick();
+}
+for(const event of ['wheel','touchstart','pointerdown'])addEventListener(event,stopMenuTravel,{passive:true});
+addEventListener('keydown',e=>{if(['ArrowDown','ArrowUp','PageDown','PageUp','Home','End',' ','Escape'].includes(e.key))stopMenuTravel()});
 document.querySelectorAll('[data-go]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const key=a.dataset.go;history.replaceState(null,'',`#${key}`);navigate(key)}));
-addEventListener('scroll',()=>{target=clamp(scrollY/range);requestTick()},{passive:true});
-addEventListener('resize',()=>{if(ready)restoreProgress=storyTime(current);needsMeasure=true;requestTick()},{passive:true});
+addEventListener('scroll',()=>{if(!menuTravel)target=clamp(scrollY/range);requestTick()},{passive:true});
+addEventListener('resize',()=>{stopMenuTravel();if(ready)restoreProgress=storyTime(current);needsMeasure=true;requestTick()},{passive:true});
 new ResizeObserver(()=>{needsMeasure=true;requestTick()}).observe(stage);
 document.addEventListener('visibilitychange',()=>{hidden=document.hidden;lastTime=0;if(hidden&&raf){cancelAnimationFrame(raf);raf=0}else requestTick()});
 addEventListener('popstate',()=>navigate(location.hash.slice(1),false));
 function setMotion(value,persist=false){
+ if(value)stopMenuTravel();
  reduced=value;document.body.classList.toggle('reduced-motion',value);
  $('#motion-toggle').setAttribute('aria-pressed',String(value));$('#motion-toggle').textContent=value?'Activar movimiento':'Reducir movimiento';
  state.reducedMotion=value;

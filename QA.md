@@ -75,3 +75,7 @@ Añadidos los rangos de precio con IVA y las descripciones de las capturas. Tama
 ## Contacto en el cierre
 
 Última sección con dirección facilitada (Calle Caserón, nº 8, 40393 Escobar de Polendos), correo mielnectara@gmail.com y teléfono 606 66 31 81. Enlaces mailto y tel verificados. Ilustración reducida y destinos finales de insectos recalculados para conservar la recomposición. Revisado a 1440×900, 390×844 y 360×640: contacto completo dentro de pantalla, enlaces habilitados, sin errores JavaScript.
+
+## Navegación progresiva del menú
+
+Recorrido controlado por fotograma con curva de aceleración y frenada suaves y duración proporcional a la distancia. Eliminada la asignación anticipada del destino que provocaba el salto inicial. Verificado inicio→miel: progreso monotónico hasta 0,49, paso máximo observado 0,00333. La rueda interrumpe el recorrido, los clics sucesivos sustituyen el destino y movimiento reducido conserva navegación inmediata. Sin errores JavaScript.
