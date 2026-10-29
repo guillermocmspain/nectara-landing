@@ -81,3 +81,6 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 @media(max-width:760px){.botanical::before,.botanical::after{top:auto;bottom:0;width:50%;height:66.6667vw}}
 
 @media(min-width:761px) and (max-width:1100px){.desktop-nav{gap:18px}.site-header{padding-inline:24px}.header-cta{padding:12px 16px}}
+
+.preloader-brand{display:block;width:100%;height:auto;margin:0 auto 20px;object-fit:contain}
+@media(max-height:500px){.preloader-brand{width:75%;margin-bottom:8px}.loader-flight{height:100px}}
