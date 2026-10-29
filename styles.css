@@ -20,3 +20,7 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 #map-dot{position:absolute;left:0;top:0;border-radius:50%;background:var(--green);z-index:5;pointer-events:none;opacity:0}
 
 #map-journey{will-change:auto}
+
+#map-journey{transform:none;transform-origin:0 0}#map-vector{display:block;width:100%;height:100%;overflow:hidden}
+
+#map-drawing text,#map-drawing>circle,#map-drawing>path:last-of-type{opacity:var(--map-detail,1)}

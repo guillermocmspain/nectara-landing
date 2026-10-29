@@ -35,3 +35,7 @@ Los recursos gráficos ocupan aproximadamente 2 MB. No se incluyen bibliotecas d
 - Revisión visual en escritorio y móvil; corregido un recorte de composición al redimensionar el mapa.
 - Repetidas pruebas de navegación, diálogo y movimiento reducido; sin errores JavaScript, recursos fallidos ni desbordamientos a 360 y 390 px.
 - Recorrido de 6 segundos: 360 muestras, p95 16,8 ms, máximo 16,9 ms, ninguna muestra superior a 50 ms. Pruebas en Edge headless; móvil emulado.
+
+## Mapa vectorial
+
+Mapa raster sustituido por trazados SVG de Natural Earth, sin fondo rectangular y con paleta botánica. Zoom mediante transformación interna SVG en viewport fijo; punto conservado. Revisión visual de mapa y zoom a 1440 y 390 px. Navegación, diálogo y movimiento reducido correctos; sin errores ni recursos fallidos. Sin desbordamientos a 360/390 px. Recorrido: p95 16,8 ms, máximo 17 ms, cero muestras superiores a 50 ms (Edge headless).

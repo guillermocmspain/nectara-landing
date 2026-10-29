@@ -146,11 +146,13 @@ function renderScene(s,t){
  const mx=mobile?162:900,my=mobile?470:370;
  const cx=mix(mx,W/2,ease(z*2)),cy=mix(my,H/2,ease(z*2));
  const mw=mobile?330:520,mh=mw*519/628;
- style(map,'width',`${mw}px`);style(map,'height',`${mh}px`);
- style(map,'transform',`translate3d(${cx-mw*.3997}px,${cy-mh*.3911}px,0) scale(${mz})`);
+ style(map,'width',`${W}px`);style(map,'height',`${H}px`);
+ $('#map-vector').setAttribute('viewBox',`0 0 ${W} ${H}`);
+ $('#map-drawing').setAttribute('transform',`translate(${cx} ${cy}) scale(${mw/628*mz}) translate(-251 -203)`);
+ map.style.setProperty('--map-detail',(1-ease(z/.25)).toFixed(4));
  const mapAlpha=s<.40?ease((p-.65)/.3):1-ease((s-.40)/.015);
  opacity(map,mapAlpha);
- if(mapAlpha<.001)style(map,'transform','translate3d(0,0,0)');
+
  const dot=$('#map-dot'),diameter=mw*.083*mz;
  style(dot,'width',`${diameter}px`);style(dot,'height',`${diameter}px`);
  style(dot,'transform',`translate3d(${cx-diameter/2}px,${cy-diameter/2}px,0)`);opacity(dot,mapAlpha);
@@ -219,7 +221,7 @@ async function initJar(){
 }
 
 measure();renderScene(current,0);requestTick();
-const core=['./assets/botanical.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp','./assets/spain-map.png','./assets/jar-front.webp'];
+const core=['./assets/botanical.webp','./assets/art-complete.webp','./assets/art-empty.webp','./assets/brand.webp','./assets/bee-wings.webp','./assets/butterfly.webp','./assets/jar-front.webp'];
 let completed=0;const total=core.length+1;
 function loadProgress(){const percent=Math.round(++completed/total*100);$('#load-percent').textContent=percent+'%';$('#load-fill').style.transform=`scaleX(${percent/100})`;$('.loader-flight .bee').style.left=`${percent}%`;$('#load-track').setAttribute('aria-valuenow',percent)}
 Promise.allSettled([...core.map(path=>loadImage(path).finally(loadProgress)),initJar().finally(loadProgress)]).then(results=>{

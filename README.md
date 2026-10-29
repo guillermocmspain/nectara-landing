@@ -32,3 +32,5 @@ Los textos, fotografías e ilustraciones de marca se han incorporado para este p
 GitHub Pages, rama `main`, directorio raíz. `.nojekyll` evita procesamiento innecesario. Las rutas son relativas para funcionar bajo `/nectara-landing/`.
 
 No hay formularios de compra, pagos ni variedades inventadas. La llamada de producto permite consultar su etiqueta original.
+
+El mapa es SVG sin fondo: geometría de España y Portugal de Natural Earth (dominio público), con ornamentación botánica vectorial propia. Fuente: https://github.com/nvkelso/natural-earth-vector/blob/master/geojson/ne_50m_admin_0_countries.geojson . El zoom transforma los trazados dentro de un viewport SVG fijo para evitar ampliar una textura rasterizada.
