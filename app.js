@@ -11,7 +11,23 @@ let reduced=media.matches;
 let mobile=false,W=1280,H=728,scale=1,range=1,current=0,target=0,raf=0,lastTime=0,clock=0,ready=false,needsMeasure=true;
 let menuTravel=null;
 let layoutWidth=innerWidth;
-let historyTime=0;const historyRenderers=[];
+const historyVideo=$('#history-opening');
+let historyActive=false,historyVideoFailed=false;
+historyVideo.addEventListener('playing',()=>historyVideo.classList.add('is-playing'));
+historyVideo.addEventListener('error',()=>{historyVideoFailed=true;historyVideo.classList.remove('is-playing')});
+function updateHistoryVideo(p){
+ const active=p>=3.95&&p<4.3&&!hidden&&!reduced;
+ // Load near this section, never as part of the initial loader.
+ if(!historyVideoFailed&&!reduced&&p>3.3&&p<4.8&&!historyVideo.getAttribute('src')){
+  historyVideo.src=historyVideo.dataset.src;historyVideo.load();
+ }
+ if(active===historyActive)return;
+ historyActive=active;
+ if(!active){historyVideo.pause();if(reduced)historyVideo.classList.remove('is-playing');return}
+ if(historyVideoFailed)return;
+ historyVideo.currentTime=0;
+ historyVideo.play().then(()=>{if(!historyActive)historyVideo.pause()}).catch(()=>{});
+}
 let lastRaw=NaN,glJar=null,lastJarAngle=NaN,hidden=document.hidden,restoreProgress=null;
 const state={ready:false,webgl:false,progress:0,scene:0,reducedMotion:reduced,frames:0};
 const cache=new WeakMap();
@@ -137,10 +153,10 @@ function renderScene(u,t){
   const delay=i*.0015,local=s-delay;
   const approach=ease((local-.835)/.025),turn=ease((local-.860)/.012);
   const depart=ease((s-(.872+delay))/(.018-delay));
-  const fullWidth=i?(mobile?48:110):(mobile?140:340),frontWidth=mix(6,fullWidth,approach);
-  const offset=i?(i===1?-1:1)*(mobile?112:255)*approach:0;
+  const fullWidth=i?(mobile?36:110):(mobile?100:340),frontWidth=mix(6,fullWidth,approach);
+  const offset=i?(i===1?-1:1)*(mobile?90:255)*approach:0;
   const frontX=mix(mobile?W*.58:W*.48,mobile?W*.5:W*.40,approach)+offset;
-  const frontY=(mobile?400:115)+(i?(i===1?12:-10):0);
+  const frontY=(mobile?365:115)+(i?(i===1?12:-10):0);
   const frontal=front.querySelector('.history-front'),profile=front.querySelector('.history-profile');
   opacity(frontal,1-turn);opacity(profile,turn);
   style(frontal,'transform',`perspective(800px) rotateY(${turn*55}deg)`);
@@ -154,11 +170,7 @@ function renderScene(u,t){
  if(reduced)degrees=0;
  if(glJar&&jarVisible>.001&&(!Number.isFinite(lastJarAngle)||Math.abs(degrees-lastJarAngle)>.008||raw!==lastRaw)){glJar.draw(degrees,raw);lastJarAngle=degrees;lastRaw=raw}
  style($('#jar-fallback'),'filter',`brightness(${1-raw*.25}) saturate(${1+raw*.2})`);
- if(p>3.65&&p<5){
-  const autoAngle=reduced?0:(historyTime*11.25)%360;
-  historyRenderers.forEach((renderer,i)=>renderer?.draw(i?-autoAngle:autoAngle,i));
-  state.historyAngle=autoAngle;
- }
+ updateHistoryVideo(p);
  state.raw=raw;
  state.jarDegrees=degrees;
 
@@ -226,7 +238,7 @@ function tick(now){
  raf=0;if(hidden)return;
  if(needsMeasure)measure();
  const dt=lastTime?Math.min((now-lastTime)/1000,.05):1/60;lastTime=now;
- if(!reduced){clock+=dt;if(state.scene>3.65&&state.scene<5)historyTime+=dt;}
+ if(!reduced)clock+=dt;
  if(menuTravel){
   menuTravel.elapsed+=dt;
   if(menuTravel.mode==='fade'){
@@ -273,7 +285,7 @@ addEventListener('resize',()=>{
  needsMeasure=true;requestTick();
 },{passive:true});
 new ResizeObserver(()=>{needsMeasure=true;requestTick()}).observe(stage);
-document.addEventListener('visibilitychange',()=>{hidden=document.hidden;lastTime=0;if(hidden&&raf){cancelAnimationFrame(raf);raf=0}else requestTick()});
+document.addEventListener('visibilitychange',()=>{hidden=document.hidden;lastTime=0;updateHistoryVideo(state.scene);if(hidden&&raf){cancelAnimationFrame(raf);raf=0}else requestTick()});
 addEventListener('popstate',()=>navigate(location.hash.slice(1),false));
 function setMotion(value,persist=false){
  if(value)stopMenuTravel();
@@ -345,12 +357,6 @@ async function initJar(){
   return {draw(deg,r=0){gl.uniform1f(raw,r);gl.uniform1f(angle,deg*Math.PI/180);gl.drawArrays(gl.TRIANGLES,0,6)}};
  }
  glJar=setup();if(glJar){
-  for(const [i,id] of ['history-cream','history-raw'].entries()){
-   const preview=$('#'+id),renderer=setup(preview);historyRenderers[i]=renderer;
-   if(renderer){renderer.draw(0,i);preview.parentElement.classList.add('has-preview');}
-   preview.addEventListener('webglcontextlost',e=>{e.preventDefault();historyRenderers[i]=null;preview.parentElement.classList.remove('has-preview')});
-   preview.addEventListener('webglcontextrestored',()=>{try{historyRenderers[i]=setup(preview);if(historyRenderers[i])preview.parentElement.classList.add('has-preview');requestTick()}catch{preview.parentElement.classList.remove('has-preview')}});
-  }
   glJar.draw(0);lastJarAngle=NaN;jar.classList.add('ready');state.webgl=true;
  }
  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();glJar=null;jar.classList.remove('ready');state.webgl=false});

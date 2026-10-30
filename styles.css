@@ -55,10 +55,7 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 
 #menu-veil{position:fixed;inset:var(--header) 0 0;z-index:18;background:var(--green);opacity:0;visibility:hidden;pointer-events:none;will-change:opacity}
 
-.history-products{position:absolute;left:760px;top:190px;display:flex;gap:20px;opacity:0;visibility:hidden}.history-products figure{margin:0;text-align:center;width:204px}.history-jar{position:relative;width:204px;height:350px;filter:drop-shadow(0 15px 10px #23302318)}.history-jar img,.history-jar canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.history-jar canvas{visibility:hidden}.history-jar.has-preview canvas{visibility:visible}.history-jar.has-preview img{visibility:hidden}.history-raw>img{filter:brightness(.75) saturate(1.2)}.history-products figcaption{font:19px Georgia,serif;margin-top:22px;color:var(--ink)}
-@media(max-width:760px){.history-products{left:42px;top:420px;gap:22px}.history-products figure{width:142px}.history-jar{width:142px;height:245px}.history-products figcaption{font-size:15px;margin-top:13px}}
 
-@media(max-width:760px){.history-products{left:52px;gap:24px}.history-products figure{width:131px}.history-jar{width:131px;height:225px}.history-products figcaption{margin-top:10px;font-size:14px}}
 
 @media(min-width:761px){.narrative.origin-copy,.narrative.collection-copy{top:50%;transform:translateY(-50%)}.history-products{top:50%;transform:translateY(-50%)}}
 
@@ -105,7 +102,7 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 
 #history-guide,.history-companion{position:absolute;left:0;top:0;width:340px;aspect-ratio:1536/1024;z-index:5;opacity:0;visibility:hidden;pointer-events:none;will-change:transform,opacity}#history-guide img,.history-companion img{width:100%;height:100%;object-fit:contain}
 
-@media(max-width:760px){.collection-copy .reading-text p{font-size:14px;line-height:1.45;margin-bottom:12px}.history-products{top:460px}}
+@media(max-width:760px){.collection-copy .reading-text p{font-size:14px;line-height:1.45;margin-bottom:12px}}
 
 .origin-landscape{background-image:linear-gradient(to bottom,rgba(248,247,239,.87) 0%,rgba(248,247,239,.84) 55%,rgba(248,247,239,.72) 100%),url('./assets/origin-apiary.webp');background-size:cover;background-position:center;background-repeat:no-repeat}
 @media(max-width:760px){.origin-landscape{background-image:linear-gradient(to bottom,rgba(248,247,239,.91),rgba(248,247,239,.85) 60%,rgba(248,247,239,.76)),url('./assets/origin-apiary.webp');background-position:65% center}}
@@ -113,3 +110,13 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 .history-front{position:absolute;inset:0;transform-origin:50% 50%;will-change:transform,opacity}.history-profile{position:absolute;left:50%;top:50%;width:220px;height:190px;opacity:0;visibility:hidden;will-change:transform,opacity}
 
 #loader-guests{position:absolute;inset:0;overflow:hidden;pointer-events:none}.loader-guest{position:absolute;left:0;top:0;opacity:0;will-change:transform}#load-fill{background:#e6b72c}#load-track{background:#cba64a35}
+
+/* One high-quality render keeps both jars exactly synchronized. */
+.history-products{position:absolute;left:724px;top:50%;transform:translateY(-50%);width:500px;margin:0;opacity:0;visibility:hidden}
+.history-film{position:relative;width:100%;aspect-ratio:1}
+.history-film img,.history-film video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.history-film video{opacity:0}.history-film video.is-playing{opacity:1}
+.history-products figcaption{display:flex;justify-content:center;gap:0;margin:8px 0 0;font:19px Georgia,serif;color:var(--ink)}
+.history-products figcaption span{width:43.75%;text-align:center}
+@media(max-width:760px){.history-products{left:43px;top:388px;transform:none;width:304px}.history-products figcaption{font-size:14px;margin-top:0}}
+@media(prefers-reduced-motion:reduce){.history-film video{display:none}}

@@ -12,8 +12,8 @@
   <link rel="icon" href="./assets/favicon.png" type="image/png">
   <link rel="preload" as="image" href="./assets/botanical-complete.webp" fetchpriority="high">
   <link rel="preload" as="image" href="./assets/art-complete.webp" fetchpriority="high">
-  <link rel="stylesheet" href="./styles.css?v=35">
-  <script type="module" src="./app.js?v=35"></script>
+  <link rel="stylesheet" href="./styles.css?v=36">
+  <script type="module" src="./app.js?v=36"></script>
 </head>
 <body>
   <div id="preloader" role="status" aria-label="Preparando Néctara">
@@ -85,10 +85,13 @@
         </section>
         <section class="scene collection" id="coleccion" data-scene="4" aria-labelledby="collection-title">
           <div class="copy collection-copy narrative"><p class="eyebrow">04 / NUESTRA HISTORIA</p><h2 id="collection-title">Historia de Néctara</h2><div class="reading-window"><div class="reading-text"><p>Néctara nace del sueño de una familia encabezada por Javier: vivir y trabajar en contacto con la tierra. Al recoger el testigo de un apicultor de la zona que se jubilaba, encontraron una forma de preservar el oficio y dar continuidad a la tradición.</p><p>En enclaves naturales de Segovia, entre tomillos, cantuesos y encinares, cuidamos las colmenas con paciencia y respeto por los ritmos de la naturaleza. Así elaboramos una miel con identidad propia, homenaje al territorio y al trabajo bien hecho.</p></div></div></div>
-        <div class="history-products" aria-label="Los dos productos de Néctara">
-              <figure><div class="history-jar"><img src="./assets/jar-front.webp" alt="Tarro de miel cremada"><canvas id="history-cream" width="360" height="620" aria-hidden="true"></canvas></div><figcaption>Miel cremada</figcaption></figure>
-              <figure><div class="history-jar history-raw"><img src="./assets/jar-front.webp" alt="Tarro de miel cruda"><canvas id="history-raw" width="360" height="620" aria-hidden="true"></canvas></div><figcaption>Miel cruda</figcaption></figure>
-            </div>
+        <figure class="history-products" aria-label="Miel cremada y miel cruda: los dos tarros se abren e inclinan juntos">
+          <div class="history-film">
+            <img src="./assets/history-opening-poster.webp" width="640" height="640" alt="Tarros de miel cremada dorada y miel cruda ámbar" loading="lazy">
+            <video id="history-opening" width="640" height="640" muted playsinline preload="none" data-src="./assets/history-opening-v1.mp4" aria-hidden="true" disablepictureinpicture></video>
+          </div>
+          <figcaption><span>Miel cremada</span><span>Miel cruda</span></figcaption>
+        </figure>
           </section>
 
         <section class="scene closing" id="cierre" data-scene="5" aria-label="Contacto de Néctara y regreso de los insectos a la etiqueta">

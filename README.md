@@ -19,7 +19,7 @@ Abrir `http://localhost:4173`. Los módulos y las texturas requieren un servidor
 - `app.js`: recorrido ligado al scroll, trayectorias, accesibilidad y proyección cilíndrica WebGL.
 - `assets/`: recursos WebP optimizados derivados de los materiales aprobados de Néctara.
 
-La etiqueta completa original se proyecta sobre el tarro fotográfico. No se reproduce un vídeo ni se carga una secuencia de cientos de fotogramas. El scroll del navegador sigue siendo nativo; una interpolación breve suaviza las posiciones.
+La etiqueta completa original se proyecta sobre el tarro fotográfico. En Historia se reproduce un vídeo local optimizado de los dos tarros abriéndose e inclinándose a la vez. Se carga al acercarse a la sección, se reproduce una vez al entrar y se pausa al salir o al ocultar la pestaña. Con movimiento reducido o si falla la reproducción se muestra una imagen estática. No se descargan secuencias de fotogramas. El scroll del navegador sigue siendo nativo; una interpolación breve suaviza las posiciones.
 
 ## Accesibilidad y compatibilidad
 

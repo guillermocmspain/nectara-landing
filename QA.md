@@ -137,3 +137,11 @@ Referencia leída en el tema local Poppr: panel completo, cierre circular y nave
 - Built-in ImageGen prompt: quiet Castilian countryside evocative of Segovia, scattered holm oaks, distant hills, modest rows of wooden beehive boxes, gentle morning daylight, muted natural colors, wide framing, no people/text/logos; white overlay applied separately in CSS.
 - Origin backdrop only: warm white gradient overlay with stronger mobile coverage; map remains opaque above it, existing zoom wash unchanged.
 - Desktop 1440x900 and mobile 390x900 screenshots inspected for legibility and map prominence.
+
+
+## v36 — Apertura sincronizada en Historia
+
+- MP4 local de 640 × 640, sin audio, exportado con CRF 15 desde los fotogramas aprobados. Dos tarros del mismo tamaño, inclinación de 20 grados y apertura simultánea.
+- Chrome automatizado: 1440 × 900 y 390 × 844; reproducción automática en Historia, vídeo dentro del viewport, pausa al navegar a Origen y póster con prefers-reduced-motion. Sin errores de JavaScript.
+- El MP4 no se solicita en la carga inicial; comienza a prepararse cerca de Historia. No se modifican los tarros WebGL de las secciones de compra.
+- Revisión visual de ambas capturas y comprobación de sintaxis de app.js. No se ha probado en un iPhone físico.
