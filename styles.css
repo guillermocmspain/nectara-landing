@@ -120,3 +120,7 @@ dialog{padding:30px;border:1px solid #acbaa3;border-radius:12px;background:var(-
 .history-products figcaption span{width:43.75%;text-align:center}
 @media(max-width:760px){.history-products{left:43px;top:388px;transform:none;width:304px}.history-products figcaption{font-size:14px;margin-top:0}}
 @media(prefers-reduced-motion:reduce){.history-film video{display:none}}
+
+/* Extra travel belongs to the synchronized history beat, not to its text. */
+#story{height:1321svh}
+@media(max-width:760px){#story{height:988svh}}

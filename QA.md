@@ -145,3 +145,11 @@ Referencia leída en el tema local Poppr: panel completo, cierre circular y nave
 - Chrome automatizado: 1440 × 900 y 390 × 844; reproducción automática en Historia, vídeo dentro del viewport, pausa al navegar a Origen y póster con prefers-reduced-motion. Sin errores de JavaScript.
 - El MP4 no se solicita en la carga inicial; comienza a prepararse cerca de Historia. No se modifican los tarros WebGL de las secciones de compra.
 - Revisión visual de ambas capturas y comprobación de sintaxis de app.js. No se ha probado en un iPhone físico.
+
+
+## v37 — Scroll compartido de abejas y tarros
+
+- Historia dispone de tres veces más distancia de scroll; los demás tramos conservan aproximadamente su distancia previa. La navegación y la restauración al girar el móvil convierten entre recorrido físico y narrativo.
+- El vídeo se consulta por fotograma, sin reproducción automática, con una sola búsqueda en curso. MP4 CRF 15, fotograma clave cada 6 fotogramas, sin filtros de color.
+- Verificado en Chrome a 1440×900 y 390×844 con servidor de rangos HTTP: avance de apertura a cierre, retroceso, posición estable sin scroll y movimiento reducido. Sin errores JS.
+- Pendiente de prueba física en iOS; las comprobaciones móviles usan emulación de tamaño.

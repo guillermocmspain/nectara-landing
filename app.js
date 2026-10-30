@@ -12,21 +12,28 @@ let mobile=false,W=1280,H=728,scale=1,range=1,current=0,target=0,raf=0,lastTime=
 let menuTravel=null;
 let layoutWidth=innerWidth;
 const historyVideo=$('#history-opening');
-let historyActive=false,historyVideoFailed=false;
-historyVideo.addEventListener('playing',()=>historyVideo.classList.add('is-playing'));
+let historyVideoFailed=false,historySeekTarget=0;
+function seekHistoryFrame(){
+ if(hidden||reduced||historyVideoFailed||historyVideo.readyState<2||historyVideo.seeking)return;
+ const end=Math.max(0,historyVideo.duration-1/24);
+ const time=Math.round(clamp(historySeekTarget,0,end)*24)/24;
+ if(Math.abs(historyVideo.currentTime-time)>1/48)historyVideo.currentTime=time;
+}
+historyVideo.addEventListener('loadeddata',()=>{if(!reduced)historyVideo.classList.add('is-playing');seekHistoryFrame()});
+historyVideo.addEventListener('seeked',()=>{if(!reduced)historyVideo.classList.add('is-playing');seekHistoryFrame()});
 historyVideo.addEventListener('error',()=>{historyVideoFailed=true;historyVideo.classList.remove('is-playing')});
-function updateHistoryVideo(p){
- const active=p>=3.95&&p<4.3&&!hidden&&!reduced;
+function updateHistoryVideo(p,s){
+ historySeekTarget=clamp((s-.835)/.045)*Math.max(0,(historyVideo.duration||8)-1/24);
+ historyVideo.pause();
+ if(reduced){historyVideo.classList.remove('is-playing');return}
  // Load near this section, never as part of the initial loader.
  if(!historyVideoFailed&&!reduced&&p>3.3&&p<4.8&&!historyVideo.getAttribute('src')){
   historyVideo.src=historyVideo.dataset.src;historyVideo.load();
  }
- if(active===historyActive)return;
- historyActive=active;
- if(!active){historyVideo.pause();if(reduced)historyVideo.classList.remove('is-playing');return}
- if(historyVideoFailed)return;
- historyVideo.currentTime=0;
- historyVideo.play().then(()=>{if(!historyActive)historyVideo.pause()}).catch(()=>{});
+ if(p>3.3&&p<4.8){
+  if(historyVideo.readyState>=2&&!historyVideoFailed)historyVideo.classList.add('is-playing');
+  seekHistoryFrame();
+ }
 }
 let lastRaw=NaN,glJar=null,lastJarAngle=NaN,hidden=document.hidden,restoreProgress=null;
 const state={ready:false,webgl:false,progress:0,scene:0,reducedMotion:reduced,frames:0};
@@ -55,9 +62,15 @@ const loaderBees=Array.from({length:6},()=>{
 let loaderFlightTime=0;
 const wingElements=[...document.querySelectorAll('.bee-wings')];
 
-// The same direct scroll timeline on desktop and mobile.
-function storyTime(u){return u}
-function physicalTime(s){return s}
+// Give the shared bee/jar beat three times its former scroll distance.
+const historyStart=.835,historyEnd=.89,historyExtra=2*(historyEnd-historyStart);
+function storyTime(u){
+ const x=clamp(u)*(1+historyExtra);
+ if(x<=historyStart)return x;
+ if(x<=historyEnd+historyExtra)return historyStart+(x-historyStart)/3;
+ return x-historyExtra;
+}
+function physicalTime(s){return (s+historyExtra*clamp((s-historyStart)/(historyEnd-historyStart)))/(1+historyExtra)}
 function flightRoute(id,home,s,t){
  const margin=Math.max(0,(stage.clientWidth/scale-W)/2)+180;
  const edge={x:id%2?W+margin:-margin,y:H*(.2+(id%4)*.18)};
@@ -170,7 +183,7 @@ function renderScene(u,t){
  if(reduced)degrees=0;
  if(glJar&&jarVisible>.001&&(!Number.isFinite(lastJarAngle)||Math.abs(degrees-lastJarAngle)>.008||raw!==lastRaw)){glJar.draw(degrees,raw);lastJarAngle=degrees;lastRaw=raw}
  style($('#jar-fallback'),'filter',`brightness(${1-raw*.25}) saturate(${1+raw*.2})`);
- updateHistoryVideo(p);
+ updateHistoryVideo(p,s);
  state.raw=raw;
  state.jarDegrees=degrees;
 
@@ -260,7 +273,7 @@ function tick(now){
  if(menuTravel||Math.abs(target-current)>.00002||(!reduced&&current<.993))requestTick();
 }
 function requestTick(){if(!raf&&!hidden)raf=requestAnimationFrame(tick)}
-const links={inicio:0,origen:.275,miel:.44,cruda:.68,coleccion:.86,cierre:1};
+const links={inicio:0,origen:.275,miel:.44,cruda:.68,coleccion:.842,cierre:1};
 function stopMenuTravel(){if(!menuTravel)return;menuTravel=null;opacity($('#menu-veil'),0);target=clamp(scrollY/range);requestTick()}
 function navigate(key,smooth=true){
  if(!(key in links))return;
@@ -281,11 +294,11 @@ addEventListener('resize',()=>{
  // Mobile browser chrome changes height during a swipe. Never scroll back to
  // the lagging animation position in response to those height-only events.
  const widthChanged=Math.abs(innerWidth-layoutWidth)>1;
- if(widthChanged){stopMenuTravel();if(ready)restoreProgress=clamp(scrollY/range);layoutWidth=innerWidth;}
+ if(widthChanged){stopMenuTravel();if(ready)restoreProgress=storyTime(clamp(scrollY/range));layoutWidth=innerWidth;}
  needsMeasure=true;requestTick();
 },{passive:true});
 new ResizeObserver(()=>{needsMeasure=true;requestTick()}).observe(stage);
-document.addEventListener('visibilitychange',()=>{hidden=document.hidden;lastTime=0;updateHistoryVideo(state.scene);if(hidden&&raf){cancelAnimationFrame(raf);raf=0}else requestTick()});
+document.addEventListener('visibilitychange',()=>{hidden=document.hidden;lastTime=0;updateHistoryVideo(state.scene,state.storyProgress||0);if(hidden&&raf){cancelAnimationFrame(raf);raf=0}else requestTick()});
 addEventListener('popstate',()=>navigate(location.hash.slice(1),false));
 function setMotion(value,persist=false){
  if(value)stopMenuTravel();
